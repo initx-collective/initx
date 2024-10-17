@@ -44,32 +44,48 @@ importers:
 
   packages/cli:
     dependencies:
+      '@initx-plugin/cp':
+        specifier: workspace:*
+        version: link:../cp
       '@initx-plugin/git':
         specifier: workspace:*
         version: link:../git
       cac:
         specifier: ^6.7.14
         version: 6.7.14
-      execa:
-        specifier: ^9.4.1
-        version: 9.4.1
     devDependencies:
       '@initx-plugin/types':
         specifier: workspace:*
         version: link:../types
+
+  packages/cp:
+    dependencies:
+      '@initx-plugin/utils':
+        specifier: workspace:*
+        version: link:../utils
+      copy-paste:
+        specifier: ^1.5.3
+        version: 1.5.3
+    devDependencies:
+      '@initx-plugin/types':
+        specifier: workspace:*
+        version: link:../types
+      '@types/copy-paste':
+        specifier: ^1.1.33
+        version: 1.1.33
 
   packages/git:
     dependencies:
       '@initx-plugin/utils':
         specifier: workspace:*
         version: link:../utils
+      execa:
+        specifier: ^9.4.1
+        version: 9.4.1
     devDependencies:
       '@initx-plugin/types':
         specifier: workspace:*
         version: link:../types
-      execa:
-        specifier: ^9.4.1
-        version: 9.4.1
 
   packages/types: {}
 
@@ -922,6 +938,9 @@ packages:
     resolution: {integrity: sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==}
     engines: {node: '>=10.13.0'}
 
+  '@types/copy-paste@1.1.33':
+    resolution: {integrity: sha512-vhDsD3A+WPfme1SW56fZCPvgEQ6ELYC0Jzgomldg+ExpMyQ1xDcIcuzao6O5l43cttbhepo16zz54Y16+GtpKw==}
+
   '@types/eslint@8.56.11':
     resolution: {integrity: sha512-sVBpJMf7UPo/wGecYOpk2aQya2VUGeHhe38WG7/mN5FufNSubf5VT9Uh9Uyp8/eLJpu1/tuhJ/qTo4mhSB4V4Q==}
 
@@ -1312,6 +1331,9 @@ packages:
 
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
+
+  copy-paste@1.5.3:
+    resolution: {integrity: sha512-qOnFo+8l8vemGmdcoCiD7gPTefkXEg2rivYE+EBtuKOj754eFivkGhGAM9e/xqShrpuVE11evSxGnHwVAUK1Iw==}
 
   core-js-compat@3.38.0:
     resolution: {integrity: sha512-75LAicdLa4OJVwFxFbQR3NdnZjNgX6ILpVcVzcC4T2smerB5lELMrJQQQoWV6TiuC/vlaFqgU2tKQx9w5s0e0A==}
@@ -1880,6 +1902,10 @@ packages:
   human-signals@8.0.0:
     resolution: {integrity: sha512-/1/GPCpDUCCYwlERiYjxoczfP0zfvZMU/OWgQPMya9AbAE24vseigFdhAMObpc8Q4lc/kjutPfUddDYyAmejnA==}
     engines: {node: '>=18.18.0'}
+
+  iconv-lite@0.4.24:
+    resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==}
+    engines: {node: '>=0.10.0'}
 
   ignore@5.3.1:
     resolution: {integrity: sha512-5Fytz/IraMjqpwfd34ke28PTVMjZjJG2MPn5t7OE4eUCUNf8BAa7b5WUS9/Qvr6mwOQS7Mk6vdsMno5he+T8Xw==}
@@ -2641,6 +2667,9 @@ packages:
 
   run-parallel@1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
+
+  safer-buffer@2.1.2:
+    resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
 
   scslre@0.3.0:
     resolution: {integrity: sha512-3A6sD0WYP7+QrjbfNA2FN3FsOaGGFoekCVgTyypy53gPxhbkCIjtO6YWgdrfM+n/8sI8JeXZOIxsHjMTNxQ4nQ==}
@@ -3713,6 +3742,8 @@ snapshots:
 
   '@trysound/sax@0.2.0': {}
 
+  '@types/copy-paste@1.1.33': {}
+
   '@types/eslint@8.56.11':
     dependencies:
       '@types/estree': 1.0.5
@@ -4161,6 +4192,10 @@ snapshots:
   consola@3.2.3: {}
 
   convert-source-map@2.0.0: {}
+
+  copy-paste@1.5.3:
+    dependencies:
+      iconv-lite: 0.4.24
 
   core-js-compat@3.38.0:
     dependencies:
@@ -4897,6 +4932,10 @@ snapshots:
 
   human-signals@8.0.0: {}
 
+  iconv-lite@0.4.24:
+    dependencies:
+      safer-buffer: 2.1.2
+
   ignore@5.3.1: {}
 
   import-fresh@3.3.0:
@@ -5627,6 +5666,8 @@ snapshots:
   run-parallel@1.2.0:
     dependencies:
       queue-microtask: 1.2.3
+
+  safer-buffer@2.1.2: {}
 
   scslre@0.3.0:
     dependencies:

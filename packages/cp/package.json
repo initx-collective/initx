@@ -1,9 +1,9 @@
 {
-  "name": "initx",
+  "name": "@initx-plugin/cp",
   "type": "module",
   "version": "0.0.4",
   "packageManager": "pnpm@9.12.2",
-  "description": "More convenient initialization tool",
+  "description": "initx plugin, copy some text to clipboard",
   "author": "imba97",
   "license": "MIT",
   "homepage": "https://github.com/imba97/initx#readme",
@@ -20,7 +20,6 @@
   "main": "dist/index.mjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
-  "bin": "bin/initx.mjs",
   "files": [
     "dist"
   ],
@@ -29,11 +28,11 @@
     "build": "unbuild"
   },
   "dependencies": {
-    "@initx-plugin/cp": "workspace:*",
-    "@initx-plugin/git": "workspace:*",
-    "cac": "^6.7.14"
+    "@initx-plugin/utils": "workspace:*",
+    "copy-paste": "^1.5.3"
   },
   "devDependencies": {
-    "@initx-plugin/types": "workspace:*"
+    "@initx-plugin/types": "workspace:*",
+    "@types/copy-paste": "^1.1.33"
   }
 }
