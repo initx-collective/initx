@@ -20,7 +20,7 @@
     "build": "pnpm -F ./packages/* run build",
     "test": "vitest",
     "lint": "eslint --cache --flag unstable_ts_config",
-    "release": "bumpp",
+    "release": "bumpp -r",
     "prepare": "simple-git-hooks"
   },
   "devDependencies": {
