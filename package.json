@@ -16,8 +16,8 @@
     "url": "https://github.com/imba97/initx/issues"
   },
   "scripts": {
-    "stub": "pnpm -F ./packages/* run stub",
-    "build": "pnpm -F ./packages/* run build",
+    "stub": "pnpm -r --filter=./packages/** run stub",
+    "build": "pnpm -r --filter=./packages/** run build",
     "test": "vitest",
     "lint": "eslint --cache --flag unstable_ts_config",
     "release": "bumpp -r",
