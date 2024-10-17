@@ -10,7 +10,7 @@
 
 Create a new repository or modify the remote repository address in the current directory
 
-```
+```bash
 npx initx git@github.com:user/repository.git
 ```
 
@@ -18,6 +18,16 @@ npx initx git@github.com:user/repository.git
 
 Specify a branch name
 
-```
+```bash
 npx initx git@github.com:user/repository.git main
+```
+
+## Clipboard
+
+Copy some text to clipboard
+
+### SSH Public Key
+
+```bash
+npx initx cp ssh
 ```
