@@ -27,14 +27,11 @@
     "stub": "unbuild --stub",
     "build": "unbuild"
   },
-  "peerDependencies": {
-    "execa": "^9.4.1"
-  },
   "dependencies": {
-    "@initx-plugin/utils": "workspace:*"
+    "@initx-plugin/utils": "workspace:*",
+    "execa": "^9.4.1"
   },
   "devDependencies": {
-    "@initx-plugin/types": "workspace:*",
-    "execa": "^9.4.1"
+    "@initx-plugin/types": "workspace:*"
   }
 }

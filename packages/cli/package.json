@@ -30,8 +30,7 @@
   },
   "dependencies": {
     "@initx-plugin/git": "workspace:*",
-    "cac": "^6.7.14",
-    "execa": "^9.4.1"
+    "cac": "^6.7.14"
   },
   "devDependencies": {
     "@initx-plugin/types": "workspace:*"
