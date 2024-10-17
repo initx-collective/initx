@@ -1,0 +1,39 @@
+{
+  "name": "initx",
+  "type": "module",
+  "version": "0.0.0",
+  "packageManager": "pnpm@9.12.2",
+  "description": "More convenient initialization tool",
+  "author": "imba97",
+  "license": "MIT",
+  "homepage": "https://github.com/imba97/initx#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/imba97/initx"
+  },
+  "bugs": {
+    "url": "https://github.com/imba97/initx/issues"
+  },
+  "keywords": [
+    "initx"
+  ],
+  "main": "dist/index.mjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "bin": "bin/initx.mjs",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "stub": "unbuild --stub",
+    "build": "unbuild"
+  },
+  "dependencies": {
+    "@initx-plugin/git": "workspace:*",
+    "cac": "^6.7.14",
+    "execa": "^9.4.1"
+  },
+  "devDependencies": {
+    "@initx-plugin/types": "workspace:*"
+  }
+}
