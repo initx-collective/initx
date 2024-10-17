@@ -65,7 +65,7 @@ importers:
         version: link:../utils
     devDependencies:
       '@initx-plugin/types':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../types
       execa:
         specifier: ^9.4.1
