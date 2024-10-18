@@ -22,6 +22,20 @@ Specify a branch name
 npx initx git@github.com:user/repository.git main
 ```
 
+### Git User
+
+Set git username and email
+
+```bash
+npx initx user mail@example.com your_name
+```
+
+The parameter position does not distinguish which one comes first, and you can append `--global` or any git option
+
+```bash
+npx initx user your_name mail@example.com --global
+```
+
 ## Clipboard
 
 Copy some text to clipboard
