@@ -3,6 +3,11 @@ import { c, log } from '@initx-plugin/utils'
 export async function userHandle(...args: string[]) {
   const [value1, value2, ...options] = args
 
+  if (!value1 || !value2) {
+    log.error('Please provide name and email')
+    return
+  }
+
   const value1IsEmail = isEmail(value1)
 
   const email = value1IsEmail ? value1 : value2
