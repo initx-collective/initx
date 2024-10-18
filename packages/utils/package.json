@@ -1,7 +1,7 @@
 {
   "name": "@initx-plugin/utils",
   "type": "module",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "packageManager": "pnpm@9.12.2",
   "description": "More convenient initialization tool",
   "author": "imba97",
