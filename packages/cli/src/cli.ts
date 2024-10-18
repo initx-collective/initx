@@ -12,26 +12,30 @@ cli
   .usage('')
   .option('-v, --version', 'Display version number')
 
-const { args, options } = cli.parse()
+const { args, options: cliOptions } = cli.parse()
 
-if (options.h || options.help) {
+if (cliOptions.h || cliOptions.help) {
   process.exit(0)
 }
 
-if (options.v || options.version) {
+if (cliOptions.v || cliOptions.version) {
   console.log(pkgJson.version)
   process.exit(0)
 }
 
-const [something, ...rest] = args
+const [key, ...others] = args
 
-if (!something || typeof something !== 'string') {
+if (!key || typeof key !== 'string') {
   log.error('Please enter something')
   process.exit(0)
 }
 
 ; (async function () {
   for (const handler of handlers) {
-    await handler.run(something, ...rest)
+    await handler.run({
+      key,
+      cliOptions,
+      optionsList: Object.keys(cliOptions).filter(key => cliOptions[key] === true).map(key => `--${key}`)
+    }, ...others)
   }
 })()

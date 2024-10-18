@@ -44,6 +44,9 @@ importers:
 
   packages/cli:
     dependencies:
+      '@initx-plugin/core':
+        specifier: workspace:^
+        version: link:../core
       '@initx-plugin/cp':
         specifier: workspace:*
         version: link:../cp
@@ -53,38 +56,29 @@ importers:
       cac:
         specifier: ^6.7.14
         version: 6.7.14
-    devDependencies:
-      '@initx-plugin/core':
-        specifier: workspace:*
-        version: link:../core
 
   packages/core: {}
 
   packages/cp:
     dependencies:
+      '@initx-plugin/core':
+        specifier: workspace:*
+        version: link:../core
       '@initx-plugin/utils':
         specifier: workspace:*
         version: link:../utils
       clipboardy:
         specifier: ^4.0.0
         version: 4.0.0
-    devDependencies:
-      '@initx-plugin/core':
-        specifier: workspace:*
-        version: link:../core
-      '@types/copy-paste':
-        specifier: ^1.1.33
-        version: 1.1.33
 
   packages/git:
     dependencies:
-      '@initx-plugin/utils':
-        specifier: workspace:*
-        version: link:../utils
-    devDependencies:
       '@initx-plugin/core':
         specifier: workspace:*
         version: link:../core
+      '@initx-plugin/utils':
+        specifier: workspace:*
+        version: link:../utils
 
   packages/utils:
     dependencies:
@@ -937,9 +931,6 @@ packages:
   '@trysound/sax@0.2.0':
     resolution: {integrity: sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==}
     engines: {node: '>=10.13.0'}
-
-  '@types/copy-paste@1.1.33':
-    resolution: {integrity: sha512-vhDsD3A+WPfme1SW56fZCPvgEQ6ELYC0Jzgomldg+ExpMyQ1xDcIcuzao6O5l43cttbhepo16zz54Y16+GtpKw==}
 
   '@types/eslint@8.56.11':
     resolution: {integrity: sha512-sVBpJMf7UPo/wGecYOpk2aQya2VUGeHhe38WG7/mN5FufNSubf5VT9Uh9Uyp8/eLJpu1/tuhJ/qTo4mhSB4V4Q==}
@@ -3757,8 +3748,6 @@ snapshots:
       - typescript
 
   '@trysound/sax@0.2.0': {}
-
-  '@types/copy-paste@1.1.33': {}
 
   '@types/eslint@8.56.11':
     dependencies:

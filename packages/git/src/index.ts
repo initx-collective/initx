@@ -1,4 +1,4 @@
-import { InitxHandler } from '@initx-plugin/core'
+import { InitxHandler, type InitxOptions } from '@initx-plugin/core'
 
 import { GitMatcher } from './types'
 import { userHandle } from './handlers/user'
@@ -17,15 +17,15 @@ export class GitHandler extends InitxHandler {
     [GitMatcher.Gpg]: 'gpg'
   }
 
-  async handle(value: string, type: GitMatcher, ...others: string[]) {
+  async handle({ key, optionsList }: InitxOptions, type: GitMatcher, ...others: string[]) {
     switch (type) {
       case GitMatcher.Init: {
-        repositoryHandle(value, ...others)
+        repositoryHandle(key, ...others)
         break
       }
 
       case GitMatcher.User: {
-        userHandle(others)
+        userHandle(others, optionsList)
         break
       }
 

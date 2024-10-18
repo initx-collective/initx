@@ -4,24 +4,20 @@ import { resolve as pathResolve } from 'node:path'
 
 import clipboard from 'clipboardy'
 
-import { InitxHandler } from '@initx-plugin/core'
+import { InitxHandler, type InitxOptions } from '@initx-plugin/core'
 import { log } from '@initx-plugin/utils'
 
 import { CpType } from './types'
 
 export class CpHandler extends InitxHandler {
-  matchers = ['cp']
+  matchers = 'cp'
 
-  async handle(_command: string, cpType: CpType, ...rest: string[]) {
+  async handle(_options: InitxOptions, cpType: CpType, ...others: string[]) {
     if (!cpType || typeof this[cpType] !== 'function') {
       return
     }
 
-    if (!Array.isArray(rest)) {
-      rest = []
-    }
-
-    (this[cpType] as (...args: string[]) => void)(...rest)
+    ;(this[cpType] as (...args: string[]) => void)(...others)
   }
 
   async [CpType.SSH]() {

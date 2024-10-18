@@ -29,11 +29,9 @@
     "build": "unbuild"
   },
   "dependencies": {
+    "@initx-plugin/core": "workspace:*",
     "@initx-plugin/cp": "workspace:*",
     "@initx-plugin/git": "workspace:*",
     "cac": "^6.7.14"
-  },
-  "devDependencies": {
-    "@initx-plugin/core": "workspace:*"
   }
 }

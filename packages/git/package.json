@@ -28,9 +28,7 @@
     "build": "unbuild"
   },
   "dependencies": {
+    "@initx-plugin/core": "workspace:*",
     "@initx-plugin/utils": "workspace:*"
-  },
-  "devDependencies": {
-    "@initx-plugin/core": "workspace:*"
   }
 }
