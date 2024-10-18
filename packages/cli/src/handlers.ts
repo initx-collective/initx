@@ -1,4 +1,4 @@
-import type { InitxHandler } from 'packages/core/src'
+import type { InitxHandler } from '@initx-plugin/core'
 
 import { GitHandler } from '@initx-plugin/git'
 import { CpHandler } from '@initx-plugin/cp'
