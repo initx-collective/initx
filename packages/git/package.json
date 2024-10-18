@@ -28,8 +28,7 @@
     "build": "unbuild"
   },
   "dependencies": {
-    "@initx-plugin/utils": "workspace:*",
-    "execa": "^9.4.1"
+    "@initx-plugin/utils": "workspace:*"
   },
   "devDependencies": {
     "@initx-plugin/types": "workspace:*"
