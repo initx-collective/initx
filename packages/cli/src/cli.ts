@@ -8,7 +8,7 @@ const cli = cac('initx')
 
 cli
   .help()
-  .command('<something>', 'Enter something')
+  .command('<something>', 'see https://github.com/imba97/initx')
   .usage('')
   .option('-v, --version', 'Display version number')
 
