@@ -25,7 +25,7 @@ export class GitHandler extends InitxHandler {
       }
 
       case GitMatcher.User: {
-        userHandle(...others)
+        userHandle(others)
         break
       }
 

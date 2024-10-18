@@ -1,6 +1,6 @@
 import { c, log } from '@initx-plugin/utils'
 
-export async function userHandle(...args: string[]) {
+export async function userHandle(args: string[]) {
   const [value1, value2, ...options] = args
 
   if (!value1 || !value2) {
