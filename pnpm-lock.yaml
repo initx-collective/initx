@@ -54,9 +54,11 @@ importers:
         specifier: ^6.7.14
         version: 6.7.14
     devDependencies:
-      '@initx-plugin/types':
+      '@initx-plugin/core':
         specifier: workspace:*
-        version: link:../types
+        version: link:../core
+
+  packages/core: {}
 
   packages/cp:
     dependencies:
@@ -67,9 +69,9 @@ importers:
         specifier: ^1.5.3
         version: 1.5.3
     devDependencies:
-      '@initx-plugin/types':
+      '@initx-plugin/core':
         specifier: workspace:*
-        version: link:../types
+        version: link:../core
       '@types/copy-paste':
         specifier: ^1.1.33
         version: 1.1.33
@@ -80,11 +82,9 @@ importers:
         specifier: workspace:*
         version: link:../utils
     devDependencies:
-      '@initx-plugin/types':
+      '@initx-plugin/core':
         specifier: workspace:*
-        version: link:../types
-
-  packages/types: {}
+        version: link:../core
 
   packages/utils:
     dependencies:

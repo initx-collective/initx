@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from 'node:fs'
 import { resolve as pathResolve } from 'node:path'
 import { copy as doCopy } from 'copy-paste'
 
-import { InitxHandler } from '@initx-plugin/types'
+import { InitxHandler } from 'packages/core/src'
 import { log } from '@initx-plugin/utils'
 
 import { CpType } from './types'

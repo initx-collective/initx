@@ -1,9 +1,9 @@
 {
-  "name": "@initx-plugin/types",
+  "name": "@initx-plugin/core",
   "type": "module",
   "version": "0.0.5",
   "packageManager": "pnpm@9.12.2",
-  "description": "initx plugin types",
+  "description": "core module for initx plugins",
   "author": "imba97",
   "license": "MIT",
   "homepage": "https://github.com/imba97/initx#readme",

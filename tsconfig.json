@@ -8,7 +8,7 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "paths": {
-      "@initx-plugin/types": ["packages/types/src/index.ts"],
+      "@initx-plugin/core": ["packages/core/src/index.ts"],
       "@initx-plugin/git": ["packages/git/src/index.ts"],
       "@initx-plugin/utils": ["packages/utils/src/index.ts"]
     },

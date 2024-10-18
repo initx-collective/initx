@@ -1,3 +1,3 @@
 export { GitHandler } from '@initx-plugin/git'
 
-export * from '@initx-plugin/types'
+export * from 'packages/core/src'

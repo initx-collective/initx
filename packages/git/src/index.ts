@@ -1,4 +1,4 @@
-import { InitxHandler } from '@initx-plugin/types'
+import { InitxHandler } from 'packages/core/src'
 import { GitMatcher } from './types'
 import { userHandle } from './handlers/user'
 import { repositoryHandle } from './handlers/repository'

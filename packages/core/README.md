@@ -4,9 +4,9 @@
 
 <pre align="center">npx <b>initx &lt;something&gt;</b></pre>
 
-## @initx-plugin/types
+## @initx-plugin/core
 
-用于 `initx` 插件开发的类型支持
+Core module for `initx` plugins.
 
 ## Documentation
 

@@ -31,6 +31,6 @@
     "@initx-plugin/utils": "workspace:*"
   },
   "devDependencies": {
-    "@initx-plugin/types": "workspace:*"
+    "@initx-plugin/core": "workspace:*"
   }
 }
