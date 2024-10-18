@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@initx-plugin/utils": "workspace:*",
-    "copy-paste": "^1.5.3"
+    "clipboardy": "^4.0.0"
   },
   "devDependencies": {
     "@initx-plugin/core": "workspace:*",

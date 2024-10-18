@@ -1,7 +1,8 @@
 import os from 'node:os'
 import { existsSync, readFileSync } from 'node:fs'
 import { resolve as pathResolve } from 'node:path'
-import { copy as doCopy } from 'copy-paste'
+
+import clipboard from 'clipboardy'
 
 import { InitxHandler } from '@initx-plugin/core'
 import { log } from '@initx-plugin/utils'
@@ -33,21 +34,12 @@ export class CpHandler extends InitxHandler {
     }
 
     const publicKey = readFileSync(publicKeyPath, 'utf8')
-    await this.copy(publicKey)
+    this.copy(publicKey)
 
     log.success('Public key copied to clipboard')
   }
 
   private copy(content: string) {
-    return new Promise((resolve, reject) => {
-      doCopy(content, (err) => {
-        if (err) {
-          reject(err)
-          return
-        }
-
-        resolve(true)
-      })
-    })
+    clipboard.writeSync(content)
   }
 }
