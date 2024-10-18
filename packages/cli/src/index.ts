@@ -1,3 +1,4 @@
 export { GitHandler } from '@initx-plugin/git'
+export { CpHandler } from '@initx-plugin/cp'
 
-export * from 'packages/core/src'
+export * from '@initx-plugin/core'
