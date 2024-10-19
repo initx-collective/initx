@@ -45,7 +45,7 @@ importers:
   packages/cli:
     dependencies:
       '@initx-plugin/core':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../core
       '@initx-plugin/cp':
         specifier: workspace:*
