@@ -49,47 +49,43 @@ export abstract class InitxHandler {
   abstract handle(options: InitxOptions, ...others: string[]): MaybePromise<void>
 
   public run(options: InitxOptions, ...others: string[]): HandlerInfo[] {
-    const handlers: HandlerInfo[] = []
-
     // BaseMatchers
-    if (
-      !Array.isArray(this.matchers)
-      && this.matchers.matching
-      && this.matchers.description
-      && this.isPassed((this.matchers as BaseMatchers).matching, options.key)
-    ) {
-      handlers.push({
-        handler: () => this.handle(options, ...others),
-        description: (this.matchers as BaseMatchers).description
-      })
+    if (this.isBaseMatchers(this.matchers)) {
+      return this.matchBaseMatchers(this.matchers, options, ...others)
+    }
 
-      return handlers
+    // Array<BaseMatchers>
+    if (this.isArrayBaseMatchers(this.matchers)) {
+      return this.matchArrayBaseMatchers(this.matchers, options, ...others)
     }
 
     // TypeMatchers
     if (this.isObject(this.matchers)) {
-      const keys = Object.keys(this.matchers)
-
-      for (let i = 0; i < keys.length; i++) {
-        const matcher = this.matchers[keys[i]]
-        const isPassed = this.isPassed(matcher.matching, options.key)
-
-        if (isPassed) {
-          handlers.push({
-            handler: () => this.handle(options, keys[i], ...others),
-            description: matcher.description
-          })
-
-          break
-        }
-      }
-
-      return handlers
+      return this.matchTypeMatchers(this.matchers, options, ...others)
     }
 
-    // Array<BaseMatchers>
-    for (let i = 0; i < (this.matchers as Array<BaseMatchers>).length; i++) {
-      const matcher = (this.matchers as Array<BaseMatchers>)[i]
+    return []
+  }
+
+  // BaseMatchers
+  private matchBaseMatchers(matchers: BaseMatchers, options: InitxOptions, ...others: string[]): HandlerInfo[] {
+    if (!this.isPassed(matchers.matching, options.key)) {
+      return []
+    }
+
+    return [
+      {
+        handler: () => this.handle(options, ...others),
+        description: matchers.description
+      }
+    ]
+  }
+
+  private matchArrayBaseMatchers(matchers: BaseMatchers[], options: InitxOptions, ...others: string[]): HandlerInfo[] {
+    const handlers: HandlerInfo[] = []
+
+    for (let i = 0; i < matchers.length; i++) {
+      const matcher = matchers[i]
       const isPassed = this.isPassed(matcher.matching, options.key)
 
       if (isPassed) {
@@ -101,6 +97,41 @@ export abstract class InitxHandler {
     }
 
     return handlers
+  }
+
+  private matchTypeMatchers(matchers: TypeMatchers, options: InitxOptions, ...others: string[]): HandlerInfo[] {
+    const handlers: HandlerInfo[] = []
+    const keys = Object.keys(matchers)
+
+    for (let i = 0; i < keys.length; i++) {
+      const matcher = matchers[keys[i]]
+      const isPassed = this.isPassed(matcher.matching, options.key)
+
+      if (isPassed) {
+        handlers.push({
+          handler: () => this.handle(options, keys[i], ...others),
+          description: matcher.description
+        })
+
+        break
+      }
+    }
+
+    return handlers
+  }
+
+  private isBaseMatchers(matchers: Matchers): matchers is BaseMatchers {
+    const keys = Object.keys(matchers)
+
+    return (
+      this.isObject(matchers)
+      && keys.length === 2
+      && keys.every(key => key === 'matching' || key === 'description')
+    )
+  }
+
+  private isArrayBaseMatchers(matchers: Matchers): matchers is BaseMatchers[] {
+    return Array.isArray(matchers) && matchers.every(this.isBaseMatchers.bind(this))
   }
 
   private isObject(value: any): value is Record<string, unknown> {
