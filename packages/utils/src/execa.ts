@@ -1,11 +1,15 @@
 import { execa } from 'execa'
+import { log } from './log'
+import { where } from './which'
 
 export async function c(command: string, options?: string[]) {
   try {
+    where(command)
     return await execa(command, options)
   }
-  // eslint-disable-next-line unused-imports/no-unused-vars
   catch (e) {
-
+    if ((e as Error).message && (e as Error).message.startsWith('not found')) {
+      log.error(`"${command}" is not installed`)
+    }
   }
 }
