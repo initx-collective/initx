@@ -32,7 +32,7 @@ export class GitHandler extends InitxHandler {
     }
   }
 
-  async handle({ key, optionsList }: InitxOptions, type: GitMatcher, ...others: string[]) {
+  async handle({ key }: InitxOptions, type: GitMatcher, ...others: string[]) {
     switch (type) {
       case GitMatcher.Init: {
         repositoryHandle(key, ...others)
@@ -40,7 +40,7 @@ export class GitHandler extends InitxHandler {
       }
 
       case GitMatcher.User: {
-        userHandle(others, optionsList)
+        userHandle(others)
         break
       }
 

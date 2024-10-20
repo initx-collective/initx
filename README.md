@@ -30,12 +30,6 @@ Set git username and email
 npx initx user mail@example.com your_name
 ```
 
-The parameter position does not distinguish which one comes first, and you can append `--global` or any git option
-
-```bash
-npx initx user your_name mail@example.com --global
-```
-
 ### Git GPG
 
 Select `Enable or disable GPG signing for git commits`, Set git commit signature
