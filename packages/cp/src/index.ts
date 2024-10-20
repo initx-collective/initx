@@ -19,10 +19,12 @@ export class CpHandler extends InitxHandler {
 
   async handle(_options: InitxOptions, cpType: CpType, ...others: string[]) {
     if (!cpType || typeof this[cpType] !== 'function') {
+      const typeList = CpType as Record<string, string>
+      log.error(`Please enter the copy type, Available types: ${Object.keys(typeList).map(key => typeList[key])}`)
       return
     }
 
-    ;(this[cpType] as (...args: string[]) => void)(...others)
+    ; (this[cpType] as (...args: string[]) => void)(...others)
   }
 
   async [CpType.SSH]() {
