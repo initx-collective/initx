@@ -1,7 +1,8 @@
 export enum GitMatcher {
   Init = 'init',
   User = 'user',
-  Gpg = 'gpg'
+  Gpg = 'gpg',
+  GpgKey = 'gpgKey'
 }
 
 export enum GitOriginUrlHandleType {
