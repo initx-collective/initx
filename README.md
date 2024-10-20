@@ -36,6 +36,40 @@ The parameter position does not distinguish which one comes first, and you can a
 npx initx user your_name mail@example.com --global
 ```
 
+### Git GPG
+
+Select `Enable or disable GPG signing for git commits`, Set git commit signature
+
+```bash
+# Enable
+npx initx gpg true
+# Disable
+npx initx gpg false
+```
+
+## GPG
+
+Select `Import or Export GPG key`
+
+### GPG import
+
+Automatically read files ending with `publich.key` and `private.key` in the current directory
+
+```bash
+npx initx gpg import
+```
+
+### GPG export
+
+Export the public key and private key to the current directory
+
+```bash
+# npx initx gpg export key_id filename
+npx initx gpg export 92038B3E14C0D332542FB082B851A3E43D739400 home
+```
+
+`home_public.key` and `home_private.key` will be created in the current directory
+
 ## Clipboard
 
 Copy some text to clipboard
