@@ -1,7 +1,7 @@
 import cac from 'cac'
 import inquirer from 'inquirer'
 
-import type { HandlerInfo } from 'packages/core/src/handler'
+import type { HandlerInfo } from '@initx-plugin/core'
 import pkgJson from '../package.json'
 import { log } from '../../utils/src/log'
 import handlers from './handlers'

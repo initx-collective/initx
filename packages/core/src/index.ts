@@ -1,1 +1,5 @@
-export { InitxHandler, type InitxOptions } from './handler'
+export {
+  InitxHandler,
+  type InitxOptions,
+  type HandlerInfo
+} from './handler'
