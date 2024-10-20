@@ -6,7 +6,7 @@
 
 ## @initx-plugin/utils
 
-initx utils
+Utilities for `initx`
 
 ## Documentation
 

@@ -6,7 +6,7 @@
 
 ## @initx-plugin/cp
 
-Copy some text to clipboard
+Copy plugin for `initx`
 
 ## Documentation
 

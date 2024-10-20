@@ -6,7 +6,7 @@
 
 ## @initx-plugin/gpg
 
-Gpg plugin for `initx`.
+Gpg plugin for `initx`
 
 ## Documentation
 

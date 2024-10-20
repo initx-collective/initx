@@ -6,7 +6,7 @@
 
 ## @initx-plugin/git
 
-Git 相关操作
+Git plugin for `initx`
 
 ## Documentation
 
