@@ -10,7 +10,12 @@ import { log } from '@initx-plugin/utils'
 import { CpType } from './types'
 
 export class CpHandler extends InitxHandler {
-  matchers = 'cp'
+  matchers = [
+    {
+      matching: 'cp',
+      description: 'Copy SSH public key'
+    }
+  ]
 
   async handle(_options: InitxOptions, cpType: CpType, ...others: string[]) {
     if (!cpType || typeof this[cpType] !== 'function') {

@@ -32,6 +32,7 @@
     "@initx-plugin/core": "workspace:*",
     "@initx-plugin/cp": "workspace:*",
     "@initx-plugin/git": "workspace:*",
-    "cac": "^6.7.14"
+    "cac": "^6.7.14",
+    "inquirer": "^12.0.0"
   }
 }

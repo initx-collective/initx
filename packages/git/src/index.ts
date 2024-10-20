@@ -7,17 +7,29 @@ import { gpgHandle, gpgKeyHandle } from './handlers/gpg'
 
 export class GitHandler extends InitxHandler {
   matchers = {
-    [GitMatcher.Init]: [
-      /^(https?|git):\/\/.*\.git$/,
-      /^(git@.*\.git)$/,
-      /^ssh:\/\/git@.*\.git$/
-    ],
+    [GitMatcher.Init]: {
+      matching: [
+        /^(https?|git):\/\/.*\.git$/,
+        /^(git@.*\.git)$/,
+        /^ssh:\/\/git@.*\.git$/
+      ],
+      description: 'Initialize a new git repository'
+    },
 
-    [GitMatcher.User]: 'user',
+    [GitMatcher.User]: {
+      matching: 'user',
+      description: 'Set user name and email for git configuration'
+    },
 
-    [GitMatcher.Gpg]: 'gpg',
+    [GitMatcher.Gpg]: {
+      matching: 'gpg',
+      description: 'Enable or disable GPG signing for git commits'
+    },
 
-    [GitMatcher.GpgKey]: /^\w{40}$/
+    [GitMatcher.GpgKey]: {
+      matching: /^\w{40}$/,
+      description: 'Set GPG key for git commits'
+    }
   }
 
   async handle({ key, optionsList }: InitxOptions, type: GitMatcher, ...others: string[]) {
