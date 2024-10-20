@@ -4,7 +4,7 @@ import { existsSync, readdirSync } from 'fs-extra'
 import { InitxHandler, type InitxOptions } from '@initx-plugin/core'
 import { c, log } from '@initx-plugin/utils'
 
-export class GpgHandler extends InitxHandler {
+export default class GpgHandler extends InitxHandler {
   matchers = {
     matching: 'gpg',
     description: 'Import or Export GPG key'
