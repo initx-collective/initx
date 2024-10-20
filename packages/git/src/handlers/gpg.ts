@@ -1,5 +1,4 @@
-import which from 'which'
-import { c, log } from '@initx-plugin/utils'
+import { c, log, where } from '@initx-plugin/utils'
 
 export async function gpgHandle(switchFlag?: string) {
   if (!switchFlag || !~['true', 'false'].indexOf(switchFlag)) {
@@ -10,7 +9,7 @@ export async function gpgHandle(switchFlag?: string) {
   let gpgPath: string
 
   try {
-    gpgPath = await which('gpg')
+    gpgPath = where('gpg')
   }
   // eslint-disable-next-line unused-imports/no-unused-vars
   catch (e) {
