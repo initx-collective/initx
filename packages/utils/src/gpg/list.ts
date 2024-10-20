@@ -12,7 +12,7 @@ export async function gpgList() {
   const result = await c('gpg', ['-k'])
 
   const keys: GpgInfo[] = []
-  const lines = result?.stdout.split(EOL).filter(str => str.trim() !== '')
+  const lines = (result.stdout as string).split(EOL).filter(str => str.trim() !== '')
 
   if (!lines || lines.length < 4) {
     return []
