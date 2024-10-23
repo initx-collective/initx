@@ -45,7 +45,9 @@ export default class GpgHandler extends InitxHandler {
           return
         }
 
-        this.deleteKey(key)
+        const [deleteType] = others
+
+        this.deleteKey(key, deleteType)
         break
       }
     }
@@ -138,23 +140,30 @@ export default class GpgHandler extends InitxHandler {
     log.success(`GPG keys exported to "${publicKeyName}" and "${privateKeyName}"`)
   }
 
-  async deleteKey(key: string) {
+  async deleteKey(key: string, deleteType?: string) {
+    const hasDeleteType = !!(deleteType && ~['public', 'private'].indexOf(deleteType))
+
     const { confirm } = await inquirer.prompt([{
       type: 'confirm',
       name: 'confirm',
       default: false,
-      message: `Are you sure you want to delete the key "${key}"?`
+      message: `Are you sure you want to delete the${hasDeleteType ? ` ${deleteType}` : ''} key "${key}"?`
     }])
 
     if (!confirm) {
       return
     }
 
-    await c('gpg', ['--delete-secret-keys', key], {
-      stdin: 'inherit'
-    })
-    await c('gpg', ['--delete-keys', key], {
-      stdin: 'inherit'
-    })
+    if (!hasDeleteType || deleteType === 'private') {
+      await c('gpg', ['--delete-secret-keys', key], {
+        stdin: 'inherit'
+      })
+    }
+
+    if (!hasDeleteType || deleteType === 'public') {
+      await c('gpg', ['--delete-keys', key], {
+        stdin: 'inherit'
+      })
+    }
   }
 }
