@@ -21,6 +21,7 @@
     "test": "vitest",
     "lint": "eslint --cache --flag unstable_ts_config",
     "release": "bumpp -r",
+    "initx": "node ./packages/cli/bin/initx.mjs",
     "prepare": "simple-git-hooks"
   },
   "dependencies": {
