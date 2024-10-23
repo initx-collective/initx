@@ -1,13 +1,14 @@
 import path from 'node:path'
-import { existsSync, readdirSync } from 'fs-extra'
+import inquirer from 'inquirer'
+import { existsSync, readdirSync, unlinkSync } from 'fs-extra'
 
 import { InitxHandler, type InitxOptions } from '@initx-plugin/core'
-import { c, log } from '@initx-plugin/utils'
+import { c, gpgList, log } from '@initx-plugin/utils'
 
 export default class GpgHandler extends InitxHandler {
   matchers = {
     matching: 'gpg',
-    description: 'Import or Export GPG key'
+    description: 'Import, export, and delete GPG Keys'
   }
 
   async handle(_options: InitxOptions, type: string, ...others: string[]) {
@@ -16,21 +17,66 @@ export default class GpgHandler extends InitxHandler {
       process.exit(0)
     }
 
-    if (type === 'import') {
-      await this.importKey()
-      return
-    }
-
-    if (type === 'export') {
-      const [key, filename] = others
-
-      if (!key) {
-        log.error('Please enter a valid GPG key')
-        return
+    switch (type) {
+      case 'import': {
+        await this.importKey()
+        break
       }
 
-      await this.exportKey(key, filename)
+      case 'export': {
+        const key = await this.findKey()
+
+        if (!key) {
+          log.error('No GPG keys found')
+          return
+        }
+
+        const [filename] = others
+        await this.exportKey(key, filename)
+
+        break
+      }
+
+      case 'delete': {
+        const key = await this.findKey()
+
+        if (!key) {
+          log.error('No GPG keys found')
+          return
+        }
+
+        this.deleteKey(key)
+        break
+      }
     }
+  }
+
+  async findKey() {
+    const list = await gpgList()
+
+    if (list.length === 0) {
+      log.error('No GPG keys found')
+      return null
+    }
+
+    if (list.length === 1) {
+      const [firstKey] = list
+      return firstKey.key
+    }
+
+    const { key } = await inquirer.prompt([
+      {
+        name: 'key',
+        type: 'list',
+        message: 'Select a GPG key to export',
+        choices: list.map(gpg => ({
+          name: `${gpg.name} <${gpg.email}> [${gpg.key}]`,
+          value: gpg.key
+        }))
+      }
+    ])
+
+    return key
   }
 
   async importKey() {
@@ -38,37 +84,48 @@ export default class GpgHandler extends InitxHandler {
     const publicKeys = dir.filter(file => file.endsWith('public.key'))
     const privateKeys = dir.filter(file => file.endsWith('private.key'))
 
-    if (publicKeys.length !== 1 || privateKeys.length !== 1) {
-      log.error('Please make sure you have exactly one public.key and one private.key file in the current directory')
+    const keys = [...publicKeys, ...privateKeys]
+
+    if (keys.length === 0) {
+      log.error('No matching key file found')
       return
     }
 
-    const publicKeyPath = path.join(process.cwd(), publicKeys[0])
-    const privateKeyPath = path.join(process.cwd(), privateKeys[0])
-
-    await c('gpg', ['--import', publicKeyPath])
-    const result = await c('gpg', ['--import', privateKeyPath])
-
-    if (result && (result.stderr as string).includes('secret key imported')) {
-      log.success(`GPG keys imported from "${publicKeys[0]}" and "${privateKeys[0]}"`)
-      return
+    for (const key of keys) {
+      const keyPath = path.join(process.cwd(), key)
+      log.info(`Importing GPG key from "${key}"`)
+      await c('gpg', ['--import', keyPath])
     }
-
-    log.error('Error importing GPG keys')
   }
 
   async exportKey(key: string, filename?: string) {
-    const result = await c('gpg', ['-k', key])
-
-    if (result.failed) {
-      log.error(result.stderr as string || 'Error exporting GPG key')
-    }
-
     const publicKeyName = filename ? `${filename}_public.key` : 'public.key'
     const privateKeyName = filename ? `${filename}_private.key` : 'private.key'
 
     const publicKeyPath = path.join(process.cwd(), publicKeyName)
     const privateKeyPath = path.join(process.cwd(), privateKeyName)
+
+    if (existsSync(publicKeyPath) || existsSync(privateKeyPath)) {
+      const { overwrite } = await inquirer.prompt([{
+        type: 'confirm',
+        name: 'overwrite',
+        default: false,
+        message: `Key file "${publicKeyName}" or "${privateKeyName}" already exists, overwrite?`
+      }])
+
+      if (!overwrite) {
+        return
+      }
+
+      // remove existing key files
+      if (existsSync(publicKeyPath)) {
+        unlinkSync(publicKeyPath)
+      }
+
+      if (existsSync(privateKeyPath)) {
+        unlinkSync(privateKeyPath)
+      }
+    }
 
     await c('gpg', ['--armor', '--output', publicKeyPath, '--export', key])
     await c('gpg', ['--armor', '--output', privateKeyPath, '--export-secret-keys', key])
@@ -79,5 +136,25 @@ export default class GpgHandler extends InitxHandler {
     }
 
     log.success(`GPG keys exported to "${publicKeyName}" and "${privateKeyName}"`)
+  }
+
+  async deleteKey(key: string) {
+    const { confirm } = await inquirer.prompt([{
+      type: 'confirm',
+      name: 'confirm',
+      default: false,
+      message: `Are you sure you want to delete the key "${key}"?`
+    }])
+
+    if (!confirm) {
+      return
+    }
+
+    await c('gpg', ['--delete-secret-keys', key], {
+      stdin: 'inherit'
+    })
+    await c('gpg', ['--delete-keys', key], {
+      stdin: 'inherit'
+    })
   }
 }
