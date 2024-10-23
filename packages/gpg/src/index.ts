@@ -57,7 +57,6 @@ export default class GpgHandler extends InitxHandler {
     const list = await gpgList()
 
     if (list.length === 0) {
-      log.error('No GPG keys found')
       return null
     }
 
