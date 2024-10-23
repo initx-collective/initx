@@ -35,15 +35,13 @@ npx initx user mail@example.com your_name
 Select `Enable or disable GPG signing for git commits`, Set git commit signature
 
 ```bash
-# Enable
+# npx initx gpg [true|false]
 npx initx gpg true
-# Disable
-npx initx gpg false
 ```
 
 ## GPG
 
-Select `Import or Export GPG key`
+Select `GPG key management`
 
 ### GPG import
 
@@ -58,11 +56,20 @@ npx initx gpg import
 Export the public key and private key to the current directory
 
 ```bash
-# npx initx gpg export key_id filename
-npx initx gpg export 92038B3E14C0D332542FB082B851A3E43D739400 home
+# npx initx gpg export [filename]?
+npx initx gpg export home
 ```
 
 `home_public.key` and `home_private.key` will be created in the current directory
+
+### GPG delete
+
+Delete the public key and private key
+
+```bash
+# npx initx gpg delete [public|private]?
+npx initx gpg delete
+```
 
 ## Clipboard
 
