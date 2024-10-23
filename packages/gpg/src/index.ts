@@ -8,7 +8,7 @@ import { c, gpgList, log } from '@initx-plugin/utils'
 export default class GpgHandler extends InitxHandler {
   matchers = {
     matching: 'gpg',
-    description: 'Import, export, and delete GPG Keys'
+    description: 'GPG key management'
   }
 
   async handle(_options: InitxOptions, type: string, ...others: string[]) {
