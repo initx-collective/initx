@@ -2,9 +2,10 @@ import cac from 'cac'
 import inquirer from 'inquirer'
 
 import type { HandlerInfo } from '@initx-plugin/core'
+import { log } from '@initx-plugin/utils'
+import { loadPlugins } from '@initx-plugin/core'
+
 import pkgJson from '../package.json'
-import { log } from '../../utils/src/log'
-import handlers from './handlers'
 
 const cli = cac('initx')
 
@@ -32,23 +33,29 @@ if (!key || typeof key !== 'string') {
   process.exit(0)
 }
 
-const matchedHandlers: HandlerInfo[] = []
-
-for (const handler of handlers) {
-  const matched = handler.run({
-    key,
-    cliOptions,
-    optionsList: Object.keys(cliOptions).filter(key => cliOptions[key] === true).map(key => `--${key}`)
-  }, ...others)
-
-  matchedHandlers.push(...matched)
-}
-
-if (matchedHandlers.length === 0) {
-  process.exit(0)
-}
-
 ; (async function () {
+  const plugins = await loadPlugins()
+
+  if (plugins.length === 0) {
+    log.error('No plugin installed')
+    process.exit(0)
+  }
+
+  const matchedHandlers: HandlerInfo[] = []
+  for (const plugin of plugins) {
+    const matched = plugin.run({
+      key,
+      cliOptions,
+      optionsList: Object.keys(cliOptions).filter(key => cliOptions[key] === true).map(key => `--${key}`)
+    }, ...others)
+
+    matchedHandlers.push(...matched)
+  }
+
+  if (matchedHandlers.length === 0) {
+    process.exit(0)
+  }
+
   if (matchedHandlers.length === 1) {
     const [{ handler }] = matchedHandlers
     await handler()

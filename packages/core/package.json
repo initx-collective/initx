@@ -26,5 +26,8 @@
   "scripts": {
     "stub": "unbuild --stub",
     "build": "unbuild"
+  },
+  "dependencies": {
+    "@initx-plugin/utils": "^0.0.11"
   }
 }
