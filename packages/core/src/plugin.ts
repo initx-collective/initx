@@ -3,6 +3,8 @@ import { c } from '@initx-plugin/utils'
 import { existsSync, readFileSync, readdirSync } from 'fs-extra'
 import type { InitxHandler } from './handler'
 
+type Constructor<T> = new (...args: any[]) => T
+
 export interface PackageInfo {
   name: string
   version: string
@@ -35,7 +37,10 @@ export async function loadPlugins(): Promise<InitxPlugin[]> {
   )
 
   return Promise.all(pluginsName.map(async (dirname) => {
-    const { default: InitxHandlerClass } = await import('importx').then(x => x.import(path.join(nodeModules, dirname), import.meta.url))
+    const InitxHandlerClass: Constructor<InitxHandler> = await import('importx')
+      .then(x => x.import(path.join(nodeModules, dirname), import.meta.url))
+      .then(x => x.default)
+
     const packageAll = JSON.parse(readFileSync(path.join(nodeModules, dirname, 'package.json'), 'utf-8'))
     const packageInfo: PackageInfo = {
       name: packageAll.name,
