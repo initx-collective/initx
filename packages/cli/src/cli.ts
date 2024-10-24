@@ -79,5 +79,5 @@ if (!key || typeof key !== 'string') {
     process.exit(0)
   }
 
-  await matchedHandlers[index]?.handler()
+  await matchedHandlers[index].handler()
 })()
