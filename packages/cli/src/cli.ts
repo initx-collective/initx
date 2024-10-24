@@ -74,5 +74,10 @@ if (!key || typeof key !== 'string') {
     }
   ])
 
+  if (!matchedHandlers[index] || typeof matchedHandlers[index].handler !== 'function') {
+    log.error('Handler not found')
+    process.exit(0)
+  }
+
   await matchedHandlers[index]?.handler()
 })()
