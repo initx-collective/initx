@@ -28,10 +28,6 @@ npx initx git@github.com:user/repository.git main
 
 ### Git User
 
-```bash
-npm install @initx-plugin/gpg -g
-```
-
 Set git username and email
 
 ```bash
@@ -48,6 +44,10 @@ npx initx gpg true
 ```
 
 ## GPG
+
+```bash
+npm install @initx-plugin/gpg -g
+```
 
 Select `GPG key management`
 
