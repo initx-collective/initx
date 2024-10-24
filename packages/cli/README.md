@@ -6,6 +6,10 @@
 
 ## Git
 
+```bash
+npm install @initx-plugin/git -g
+```
+
 ### Git Repository
 
 Create a new repository or modify the remote repository address in the current directory
@@ -23,6 +27,10 @@ npx initx git@github.com:user/repository.git main
 ```
 
 ### Git User
+
+```bash
+npm install @initx-plugin/gpg -g
+```
 
 Set git username and email
 
@@ -72,6 +80,10 @@ npx initx gpg delete
 ```
 
 ## Clipboard
+
+```bash
+npm install @initx-plugin/cp -g
+```
 
 Copy some text to clipboard
 
