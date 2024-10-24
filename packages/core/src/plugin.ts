@@ -1,6 +1,6 @@
 import path from 'node:path'
 import { c } from '@initx-plugin/utils'
-import { existsSync, readdirSync } from 'fs-extra'
+import { existsSync, readFileSync, readdirSync } from 'fs-extra'
 import type { InitxHandler } from './handler'
 
 export interface PackageInfo {
@@ -35,9 +35,8 @@ export async function loadPlugins(): Promise<InitxPlugin[]> {
   )
 
   return Promise.all(pluginsName.map(async (dirname) => {
-    const InitxHandlerClass = await import(path.join(nodeModules, dirname))
-
-    const packageAll = await import(path.join(nodeModules, dirname, 'package.json'))
+    const { default: InitxHandlerClass } = await import('importx').then(x => x.import(path.join(nodeModules, dirname), import.meta.url))
+    const packageAll = JSON.parse(readFileSync(path.join(nodeModules, dirname, 'package.json'), 'utf-8'))
     const packageInfo: PackageInfo = {
       name: packageAll.name,
       version: packageAll.version,
