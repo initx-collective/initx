@@ -4,4 +4,8 @@ export {
   type HandlerInfo
 } from './handler'
 
-export { loadPlugins } from './plugin'
+export {
+  loadPlugins,
+  type InitxPlugin,
+  type PackageInfo
+} from './plugin'

@@ -1,14 +1,54 @@
 import path from 'node:path'
 import { c } from '@initx-plugin/utils'
-import { readdirSync } from 'fs-extra'
+import { existsSync, readdirSync } from 'fs-extra'
 import type { InitxHandler } from './handler'
 
-type Constructor<T> = new (...args: any[]) => T
+export interface PackageInfo {
+  name: string
+  version: string
+  description: string
+  author: string
+  homepage?: string
+}
 
-export async function loadPlugins(): Promise<InitxHandler[]> {
+export interface InitxPlugin {
+  packageInfo: PackageInfo
+  handler: InitxHandler
+}
+
+export async function loadPlugins(): Promise<InitxPlugin[]> {
   const { stdout: npmPath } = await c('npm', ['config', 'get', 'prefix'])
   const nodeModules = path.join(npmPath as string, 'node_modules')
-  const pluginsName = readdirSync(nodeModules).filter(name => /^(?:@initx-plugin\/|initx-plugin-)/.test(name))
-  const pluginsModule: Constructor<InitxHandler>[] = await Promise.all(pluginsName.map(dirname => import(path.join(nodeModules, dirname))))
-  return pluginsModule.map(InitHandlerClass => new InitHandlerClass())
+
+  const communityPlugins = readdirSync(nodeModules)
+
+  const officialPluginPath = path.join(nodeModules, '@initx-plugin')
+  const officialPlugins = existsSync(officialPluginPath)
+    ? readdirSync(officialPluginPath).map(name => `@initx-plugin/${name}`)
+    : []
+
+  const pluginsName = [
+    ...officialPlugins,
+    ...communityPlugins
+  ].filter(
+    name => /^(?:@initx-plugin\/|initx-plugin-)/.test(name) && !/@initx-plugin\/(?:core|utils)$/.test(name)
+  )
+
+  return Promise.all(pluginsName.map(async (dirname) => {
+    const InitxHandlerClass = await import(path.join(nodeModules, dirname))
+
+    const packageAll = await import(path.join(nodeModules, dirname, 'package.json'))
+    const packageInfo: PackageInfo = {
+      name: packageAll.name,
+      version: packageAll.version,
+      description: packageAll.description,
+      author: packageAll.author,
+      homepage: packageAll.homepage
+    }
+
+    return {
+      packageInfo,
+      handler: new InitxHandlerClass()
+    } as InitxPlugin
+  }))
 }

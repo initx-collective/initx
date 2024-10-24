@@ -1,9 +1,9 @@
 import cac from 'cac'
 import inquirer from 'inquirer'
 
-import type { HandlerInfo } from '@initx-plugin/core'
 import { log } from '@initx-plugin/utils'
 import { loadPlugins } from '@initx-plugin/core'
+import type { HandlerInfo, PackageInfo } from '@initx-plugin/core'
 
 import pkgJson from '../package.json'
 
@@ -41,15 +41,24 @@ if (!key || typeof key !== 'string') {
     process.exit(0)
   }
 
-  const matchedHandlers: HandlerInfo[] = []
+  const matchedHandlers: (HandlerInfo & {
+    packageInfo: PackageInfo
+  })[] = []
+
   for (const plugin of plugins) {
-    const matched = plugin.run({
+    const { handler, packageInfo } = plugin
+
+    const matched = handler.run({
       key,
       cliOptions,
       optionsList: Object.keys(cliOptions).filter(key => cliOptions[key] === true).map(key => `--${key}`)
     }, ...others)
 
-    matchedHandlers.push(...matched)
+    matchedHandlers.push(...matched.map(item => ({
+      handler: item.handler,
+      description: item.description,
+      packageInfo
+    })))
   }
 
   if (matchedHandlers.length === 0) {
@@ -67,8 +76,8 @@ if (!key || typeof key !== 'string') {
       type: 'list',
       name: 'index',
       message: 'Which handler do you want to run?',
-      choices: matchedHandlers.map(({ description }, index) => ({
-        name: description,
+      choices: matchedHandlers.map(({ description, packageInfo }, index) => ({
+        name: `[${packageInfo.name.replace(/^@?initx-plugin[-/]/, '')}] ${description}`,
         value: index
       }))
     }
