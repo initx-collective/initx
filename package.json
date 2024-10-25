@@ -4,7 +4,7 @@
   "version": "0.0.12",
   "private": true,
   "packageManager": "pnpm@9.12.2",
-  "description": "More convenient initialization engine",
+  "description": "A more convenient scripting engine",
   "author": "imba97",
   "license": "MIT",
   "homepage": "https://github.com/imba97/initx#readme",
