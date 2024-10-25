@@ -4,6 +4,8 @@
 
 <pre align="center">npx <b>initx &lt;something&gt;</b></pre>
 
+# Plugins
+
 ## Git
 
 ```bash
@@ -92,3 +94,12 @@ Copy some text to clipboard
 ```bash
 npx initx cp ssh
 ```
+
+# Acknowledgement
+
+- [cac](https://github.com/cacjs/cac)
+- [execa](https://github.com/sindresorhus/execa)
+- [importx](https://github.com/antfu-collective/importx)
+- [inquirer](https://github.com/SBoudrias/Inquirer.js)
+- [picocolors](https://github.com/alexeyraspopov/picocolors)
+- [which](https://github.com/npm/node-which)
