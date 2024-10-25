@@ -2,7 +2,7 @@ import path from 'node:path'
 import inquirer from 'inquirer'
 import { existsSync, readdirSync, unlinkSync } from 'fs-extra'
 
-import { InitxHandler, type InitxOptions } from '@initx-plugin/core'
+import { type InitxCtx, InitxHandler } from '@initx-plugin/core'
 import { c, gpgList, log } from '@initx-plugin/utils'
 
 export default class GpgHandler extends InitxHandler {
@@ -11,7 +11,7 @@ export default class GpgHandler extends InitxHandler {
     description: 'GPG key management'
   }
 
-  async handle(_options: InitxOptions, type: string, ...others: string[]) {
+  async handle(_ctx: InitxCtx, type: string, ...others: string[]) {
     if (!type) {
       log.error('Please enter a type, import or export')
       process.exit(0)

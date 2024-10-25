@@ -4,7 +4,7 @@ import { resolve as pathResolve } from 'node:path'
 
 import clipboard from 'clipboardy'
 
-import { InitxHandler, type InitxOptions } from '@initx-plugin/core'
+import { type InitxCtx, InitxHandler } from '@initx-plugin/core'
 import { log } from '@initx-plugin/utils'
 
 import { CpType } from './types'
@@ -17,7 +17,7 @@ export default class CpHandler extends InitxHandler {
     }
   ]
 
-  async handle(_options: InitxOptions, cpType: CpType, ...others: string[]) {
+  async handle(_ctx: InitxCtx, cpType: CpType, ...others: string[]) {
     if (!cpType || typeof this[cpType] !== 'function') {
       const typeList = CpType as Record<string, string>
       log.error(`Please enter the copy type, Available types: ${Object.keys(typeList).map(key => typeList[key])}`)

@@ -20,7 +20,7 @@ export interface HandlerInfo {
   description: string
 }
 
-export interface InitxOptions {
+export interface InitxCtx {
   /**
    * Matching string
    *
@@ -46,9 +46,9 @@ export interface InitxOptions {
 
 export abstract class InitxHandler {
   abstract matchers: Matchers
-  abstract handle(options: InitxOptions, ...others: string[]): MaybePromise<void>
+  abstract handle(options: InitxCtx, ...others: string[]): MaybePromise<void>
 
-  public run(options: InitxOptions, ...others: string[]): HandlerInfo[] {
+  public run(options: InitxCtx, ...others: string[]): HandlerInfo[] {
     // BaseMatchers
     if (this.isBaseMatchers(this.matchers)) {
       return this.matchBaseMatchers(this.matchers, options, ...others)
@@ -68,7 +68,7 @@ export abstract class InitxHandler {
   }
 
   // BaseMatchers
-  private matchBaseMatchers(matchers: BaseMatchers, options: InitxOptions, ...others: string[]): HandlerInfo[] {
+  private matchBaseMatchers(matchers: BaseMatchers, options: InitxCtx, ...others: string[]): HandlerInfo[] {
     if (!this.isPassed(matchers.matching, options.key)) {
       return []
     }
@@ -81,7 +81,7 @@ export abstract class InitxHandler {
     ]
   }
 
-  private matchArrayBaseMatchers(matchers: BaseMatchers[], options: InitxOptions, ...others: string[]): HandlerInfo[] {
+  private matchArrayBaseMatchers(matchers: BaseMatchers[], options: InitxCtx, ...others: string[]): HandlerInfo[] {
     const handlers: HandlerInfo[] = []
 
     for (let i = 0; i < matchers.length; i++) {
@@ -99,7 +99,7 @@ export abstract class InitxHandler {
     return handlers
   }
 
-  private matchTypeMatchers(matchers: TypeMatchers, options: InitxOptions, ...others: string[]): HandlerInfo[] {
+  private matchTypeMatchers(matchers: TypeMatchers, options: InitxCtx, ...others: string[]): HandlerInfo[] {
     const handlers: HandlerInfo[] = []
     const keys = Object.keys(matchers)
 

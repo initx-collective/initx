@@ -1,6 +1,6 @@
 export {
   InitxHandler,
-  type InitxOptions,
+  type InitxCtx,
   type HandlerInfo
 } from './handler'
 
