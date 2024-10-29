@@ -1,6 +1,8 @@
 import path from 'node:path'
+
+import fs from 'fs-extra'
 import { c } from '@initx-plugin/utils'
-import { existsSync, readFileSync, readdirSync } from 'fs-extra'
+
 import type { InitxHandler } from './handler'
 
 type Constructor<T> = new (...args: any[]) => T
@@ -22,11 +24,11 @@ export async function loadPlugins(): Promise<InitxPlugin[]> {
   const { stdout: npmPath } = await c('npm', ['config', 'get', 'prefix'])
   const nodeModules = path.join(npmPath as string, 'node_modules')
 
-  const communityPlugins = readdirSync(nodeModules)
+  const communityPlugins = fs.readdirSync(nodeModules)
 
   const officialPluginPath = path.join(nodeModules, '@initx-plugin')
-  const officialPlugins = existsSync(officialPluginPath)
-    ? readdirSync(officialPluginPath).map(name => `@initx-plugin/${name}`)
+  const officialPlugins = fs.existsSync(officialPluginPath)
+    ? fs.readdirSync(officialPluginPath).map(name => `@initx-plugin/${name}`)
     : []
 
   const pluginsName = [
@@ -41,7 +43,7 @@ export async function loadPlugins(): Promise<InitxPlugin[]> {
       .then(x => x.import(path.join(nodeModules, dirname), import.meta.url))
       .then(x => x.default)
 
-    const packageAll = JSON.parse(readFileSync(path.join(nodeModules, dirname, 'package.json'), 'utf-8'))
+    const packageAll = JSON.parse(fs.readFileSync(path.join(nodeModules, dirname, 'package.json'), 'utf-8'))
     const packageInfo: PackageInfo = {
       name: packageAll.name,
       version: packageAll.version,
