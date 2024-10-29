@@ -11,7 +11,7 @@ const cli = cac('initx')
 
 cli
   .help()
-  .command('<something>', 'see https://github.com/imba97/initx')
+  .command('<something>', 'see https://github.com/initx-collective/initx')
   .usage('')
   .option('-v, --version', 'Display version number')
 
