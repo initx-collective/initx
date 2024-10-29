@@ -70,7 +70,7 @@ if (!key || typeof key !== 'string') {
     return
   }
 
-  const { index } = await inquirer.select(
+  const index = await inquirer.select(
     'Which handler do you want to run?',
     matchedHandlers.map(
       ({ description, packageInfo }) => `[${packageInfo.name.replace(/^@?initx-plugin[-/]/, '')}] ${description}`
