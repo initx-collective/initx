@@ -1,7 +1,7 @@
 {
   "name": "@initx-plugin/core",
   "type": "module",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "packageManager": "pnpm@9.12.3",
   "description": "core module for initx plugins",
   "author": "imba97",

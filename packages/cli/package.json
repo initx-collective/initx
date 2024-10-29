@@ -1,7 +1,7 @@
 {
   "name": "initx",
   "type": "module",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "packageManager": "pnpm@9.12.3",
   "description": "A more convenient scripting engine",
   "author": "imba97",
