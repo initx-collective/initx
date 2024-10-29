@@ -2,7 +2,7 @@
   "name": "@initx-plugin/utils",
   "type": "module",
   "version": "0.0.13",
-  "packageManager": "pnpm@9.12.2",
+  "packageManager": "pnpm@9.12.3",
   "description": "A more convenient scripting engine",
   "author": "imba97",
   "license": "MIT",
@@ -38,7 +38,7 @@
     "build": "unbuild"
   },
   "dependencies": {
-    "execa": "^9.4.1",
+    "execa": "^9.5.0",
     "picocolors": "^1.1.1",
     "which": "^5.0.0"
   },
