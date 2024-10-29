@@ -1,7 +1,6 @@
 import cac from 'cac'
-import inquirer from 'inquirer'
 
-import { log } from '@initx-plugin/utils'
+import { inquirer, log } from '@initx-plugin/utils'
 import { loadPlugins } from '@initx-plugin/core'
 import type { HandlerInfo, PackageInfo } from '@initx-plugin/core'
 
@@ -71,17 +70,12 @@ if (!key || typeof key !== 'string') {
     return
   }
 
-  const { index } = await inquirer.prompt([
-    {
-      type: 'list',
-      name: 'index',
-      message: 'Which handler do you want to run?',
-      choices: matchedHandlers.map(({ description, packageInfo }, index) => ({
-        name: `[${packageInfo.name.replace(/^@?initx-plugin[-/]/, '')}] ${description}`,
-        value: index
-      }))
-    }
-  ])
+  const { index } = await inquirer.select(
+    'Which handler do you want to run?',
+    matchedHandlers.map(
+      ({ description, packageInfo }) => `[${packageInfo.name.replace(/^@?initx-plugin[-/]/, '')}] ${description}`
+    )
+  )
 
   if (!matchedHandlers[index] || typeof matchedHandlers[index].handler !== 'function') {
     log.error('Handler not found')
