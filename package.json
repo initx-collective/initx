@@ -24,12 +24,8 @@
     "initx": "node ./packages/cli/bin/initx.mjs",
     "prepare": "simple-git-hooks"
   },
-  "dependencies": {
-    "fs-extra": "^11.2.0"
-  },
   "devDependencies": {
     "@imba97/eslint-config": "^0.0.4",
-    "@types/fs-extra": "^11.0.4",
     "@types/node": "^22.7.9",
     "bumpp": "^9.7.1",
     "defu": "^6.1.4",
