@@ -38,9 +38,10 @@ export async function loadPlugins(): Promise<InitxPlugin[]> {
     name => /^(?:@initx-plugin\/|initx-plugin-)/.test(name) && !/@initx-plugin\/(?:core|utils)$/.test(name)
   )
 
+  const x = await import('importx')
   return Promise.all(pluginsName.map(async (dirname) => {
-    const InitxHandlerClass: Constructor<InitxHandler> = await import('importx')
-      .then(x => x.import(path.join(nodeModules, dirname), import.meta.url))
+    const InitxHandlerClass: Constructor<InitxHandler> = await x
+      .import(path.join(nodeModules, dirname), import.meta.url)
       .then(x => x.default)
 
     const packageAll = JSON.parse(fs.readFileSync(path.join(nodeModules, dirname, 'package.json'), 'utf-8'))
