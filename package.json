@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@imba97/eslint-config": "^0.0.4",
-    "@types/node": "^22.8.2",
+    "@types/node": "^22.8.6",
     "bumpp": "^9.8.0",
     "defu": "^6.1.4",
     "eslint": "^9.13.0",
