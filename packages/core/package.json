@@ -27,7 +27,7 @@
     "build": "unbuild"
   },
   "dependencies": {
-    "@initx-plugin/utils": "^0.0.11",
+    "@initx-plugin/utils": "workspace:*",
     "fs-extra": "^11.2.0",
     "importx": "^0.5.0"
   },
