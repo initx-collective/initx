@@ -1,6 +1,6 @@
 import { EOL } from 'node:os'
 
-import { c } from '../execa'
+import { c } from '../executor'
 
 interface GpgInfo {
   key: string
@@ -12,7 +12,7 @@ export async function gpgList() {
   const result = await c('gpg', ['-k'])
 
   const keys: GpgInfo[] = []
-  const lines = (result.stdout as string).split(EOL).filter(str => str.trim() !== '')
+  const lines = result.content.split(EOL).filter(str => str.trim() !== '')
 
   if (!lines || lines.length < 4) {
     return []

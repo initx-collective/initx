@@ -19,6 +19,7 @@
     "stub": "pnpm -r --filter=./packages/** run stub",
     "build": "pnpm -r --filter=./packages/** run build",
     "test": "vitest",
+    "tu": "vitest -u",
     "lint": "eslint --cache --flag unstable_ts_config",
     "release": "bumpp -r",
     "initx": "node ./packages/cli/bin/initx.mjs",

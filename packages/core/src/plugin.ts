@@ -21,7 +21,7 @@ export interface InitxPlugin {
 }
 
 export async function loadPlugins(): Promise<InitxPlugin[]> {
-  const { stdout: npmPath } = await c('npm', ['config', 'get', 'prefix'])
+  const { content: npmPath } = await c('npm', ['config', 'get', 'prefix'])
   const nodeModules = path.join(npmPath as string, 'node_modules')
 
   const communityPlugins = fs.readdirSync(nodeModules)
