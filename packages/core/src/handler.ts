@@ -112,8 +112,6 @@ export abstract class InitxHandler {
           handler: () => this.handle(options, keys[i], ...others),
           description: matcher.description
         })
-
-        break
       }
     }
 
