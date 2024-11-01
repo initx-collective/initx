@@ -5,7 +5,6 @@
   "private": true,
   "packageManager": "pnpm@9.12.3",
   "description": "A more convenient scripting engine",
-  "author": "imba97",
   "license": "MIT",
   "homepage": "https://github.com/initx-collective/initx#readme",
   "repository": {
