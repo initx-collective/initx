@@ -8,6 +8,7 @@ import type { InitxPlugin } from './handler'
 type Constructor<T> = new (...args: any[]) => T
 
 export interface PackageInfo {
+  root: string
   name: string
   version: string
   description: string
@@ -40,12 +41,15 @@ export async function loadPlugins(): Promise<InitxPluginInfo[]> {
 
   const x = await import('importx')
   return Promise.all(pluginsName.map(async (dirname) => {
+    const modulePath = path.join(nodeModules, dirname)
+
     const InitxPluginClass: Constructor<InitxPlugin> = await x
-      .import(path.join(nodeModules, dirname), import.meta.url)
+      .import(modulePath, import.meta.url)
       .then(x => x.default)
 
     const packageAll = JSON.parse(fs.readFileSync(path.join(nodeModules, dirname, 'package.json'), 'utf-8'))
     const packageInfo: PackageInfo = {
+      root: modulePath,
       name: packageAll.name,
       version: packageAll.version,
       description: packageAll.description,
