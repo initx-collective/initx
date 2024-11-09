@@ -46,15 +46,15 @@ export async function loadPlugins(): Promise<InitxPluginInfo[]> {
 
   const x = await import('importx')
   return Promise.all(pluginsName.map(async (dirname) => {
-    const modulePath = path.join(nodeModules, dirname)
+    const pluginRoot = path.join(nodeModules, dirname)
 
     const InitxPluginClass: Constructor<InitxPlugin> = await x
-      .import(modulePath, import.meta.url)
+      .import(pluginRoot, import.meta.url)
       .then(x => x.default)
 
     const packageAll = JSON.parse(fs.readFileSync(path.join(nodeModules, dirname, 'package.json'), 'utf-8'))
     const packageInfo: PackageInfo = {
-      root: modulePath,
+      root: pluginRoot,
       name: packageAll.name,
       version: packageAll.version,
       description: packageAll.description,
