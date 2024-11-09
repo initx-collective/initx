@@ -50,6 +50,7 @@ if (!key || typeof key !== 'string') {
     const matched = instance.run({
       key,
       cliOptions,
+      packageInfo,
       optionsList: Object.keys(cliOptions).filter(key => cliOptions[key] === true).map(key => `--${key}`)
     }, ...others)
 

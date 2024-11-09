@@ -1,3 +1,5 @@
+import type { PackageInfo } from './plugin'
+
 type MaybeArray<T> = T | T[]
 type MaybePromise<T> = T | Promise<T>
 
@@ -34,6 +36,11 @@ export interface InitxCtx {
    * cac package parsed options
    */
   cliOptions: Record<string, any>
+
+  /**
+   * Package info
+   */
+  packageInfo: PackageInfo
 
   /**
    * Options list
