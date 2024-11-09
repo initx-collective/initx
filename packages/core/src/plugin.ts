@@ -32,11 +32,16 @@ export async function loadPlugins(): Promise<InitxPluginInfo[]> {
     ? fs.readdirSync(officialPluginPath).map(name => `@initx-plugin/${name}`)
     : []
 
+  const regexps = {
+    plugin: /^(?:@initx-plugin\/|initx-plugin-)/,
+    exclude: /@initx-plugin\/(?:core|utils)$/
+  }
+
   const pluginsName = [
     ...officialPlugins,
     ...communityPlugins
   ].filter(
-    name => /^(?:@initx-plugin\/|initx-plugin-)/.test(name) && !/@initx-plugin\/(?:core|utils)$/.test(name)
+    name => regexps.plugin.test(name) && !regexps.exclude.test(name)
   )
 
   const x = await import('importx')
