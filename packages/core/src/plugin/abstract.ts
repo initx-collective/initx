@@ -55,8 +55,6 @@ export abstract class InitxPlugin {
   abstract matchers: Matchers
   abstract handle(options: InitxCtx, ...others: string[]): MaybePromise<void>
 
-  abstract onLoaded?(): MaybePromise<void>
-
   public run(options: InitxCtx, ...others: string[]): HandlerInfo[] {
     // BaseMatchers
     if (this.isBaseMatchers(this.matchers)) {
