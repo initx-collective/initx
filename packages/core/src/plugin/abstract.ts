@@ -1,4 +1,4 @@
-import type { PackageInfo } from './plugin'
+import type { PackageInfo } from './utils'
 
 type MaybeArray<T> = T | T[]
 type MaybePromise<T> = T | Promise<T>
@@ -54,6 +54,8 @@ export interface InitxCtx {
 export abstract class InitxPlugin {
   abstract matchers: Matchers
   abstract handle(options: InitxCtx, ...others: string[]): MaybePromise<void>
+
+  abstract onLoaded?(): MaybePromise<void>
 
   public run(options: InitxCtx, ...others: string[]): HandlerInfo[] {
     // BaseMatchers

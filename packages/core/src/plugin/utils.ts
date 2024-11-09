@@ -3,7 +3,7 @@ import path from 'node:path'
 import fs from 'fs-extra'
 import { c } from '@initx-plugin/utils'
 
-import type { InitxPlugin } from './handler'
+import type { InitxPlugin } from './abstract'
 
 type Constructor<T> = new (...args: any[]) => T
 
