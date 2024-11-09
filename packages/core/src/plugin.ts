@@ -3,7 +3,7 @@ import path from 'node:path'
 import fs from 'fs-extra'
 import { c } from '@initx-plugin/utils'
 
-import type { InitxHandler } from './handler'
+import type { InitxPlugin } from './handler'
 
 type Constructor<T> = new (...args: any[]) => T
 
@@ -15,12 +15,12 @@ export interface PackageInfo {
   homepage?: string
 }
 
-export interface InitxPlugin {
+export interface InitxPluginInfo {
   packageInfo: PackageInfo
-  handler: InitxHandler
+  instance: InitxPlugin
 }
 
-export async function loadPlugins(): Promise<InitxPlugin[]> {
+export async function loadPlugins(): Promise<InitxPluginInfo[]> {
   const { content: npmPath } = await c('npm', ['config', 'get', 'prefix'])
   const nodeModules = path.join(npmPath as string, 'node_modules')
 
@@ -40,7 +40,7 @@ export async function loadPlugins(): Promise<InitxPlugin[]> {
 
   const x = await import('importx')
   return Promise.all(pluginsName.map(async (dirname) => {
-    const InitxHandlerClass: Constructor<InitxHandler> = await x
+    const InitxPluginClass: Constructor<InitxPlugin> = await x
       .import(path.join(nodeModules, dirname), import.meta.url)
       .then(x => x.default)
 
@@ -55,7 +55,7 @@ export async function loadPlugins(): Promise<InitxPlugin[]> {
 
     return {
       packageInfo,
-      handler: new InitxHandlerClass()
-    } as InitxPlugin
+      instance: new InitxPluginClass()
+    } as InitxPluginInfo
   }))
 }

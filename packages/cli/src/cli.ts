@@ -45,9 +45,9 @@ if (!key || typeof key !== 'string') {
   })[] = []
 
   for (const plugin of plugins) {
-    const { handler, packageInfo } = plugin
+    const { instance, packageInfo } = plugin
 
-    const matched = handler.run({
+    const matched = instance.run({
       key,
       cliOptions,
       optionsList: Object.keys(cliOptions).filter(key => cliOptions[key] === true).map(key => `--${key}`)

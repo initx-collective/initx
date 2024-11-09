@@ -44,7 +44,7 @@ export interface InitxCtx {
   optionsList: string[]
 }
 
-export abstract class InitxHandler {
+export abstract class InitxPlugin {
   abstract matchers: Matchers
   abstract handle(options: InitxCtx, ...others: string[]): MaybePromise<void>
 
