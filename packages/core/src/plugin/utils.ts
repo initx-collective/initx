@@ -3,7 +3,7 @@ import path from 'node:path'
 import fs from 'fs-extra'
 import { c } from '@initx-plugin/utils'
 
-import type { InitxPlugin } from './abstract'
+import type { HandlerInfo, InitxCtx, InitxPlugin } from './abstract'
 
 type Constructor<T> = new (...args: any[]) => T
 
@@ -19,6 +19,10 @@ export interface PackageInfo {
 export interface InitxPluginInfo {
   packageInfo: PackageInfo
   instance: InitxPlugin
+}
+
+export type MatchedPlugin = HandlerInfo & {
+  packageInfo: PackageInfo
 }
 
 export async function loadPlugins(): Promise<InitxPluginInfo[]> {
@@ -67,4 +71,31 @@ export async function loadPlugins(): Promise<InitxPluginInfo[]> {
       instance: new InitxPluginClass()
     } as InitxPluginInfo
   }))
+}
+
+export function matchPlugins(
+  plugins: InitxPluginInfo[],
+  { key, cliOptions }: Omit<InitxCtx, 'packageInfo'>,
+  ...others: string[]
+): MatchedPlugin[] {
+  const matchedHandlers: MatchedPlugin[] = []
+
+  for (const plugin of plugins) {
+    const { instance, packageInfo } = plugin
+
+    const matched = instance.run({
+      key,
+      cliOptions,
+      packageInfo,
+      optionsList: Object.keys(cliOptions).filter(key => cliOptions[key] === true).map(key => `--${key}`)
+    }, ...others)
+
+    matchedHandlers.push(...matched.map(item => ({
+      handler: item.handler,
+      description: item.description,
+      packageInfo
+    })))
+  }
+
+  return matchedHandlers
 }

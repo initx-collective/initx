@@ -1,8 +1,9 @@
 import cac from 'cac'
 
 import { inquirer, log } from '@initx-plugin/utils'
-import { loadPlugins } from '@initx-plugin/core'
-import type { HandlerInfo, PackageInfo } from '@initx-plugin/core'
+import { loadPlugins, matchPlugins } from '@initx-plugin/core'
+
+import type { InitxCtx } from '@initx-plugin/core'
 
 import pkgJson from '../package.json'
 
@@ -40,26 +41,13 @@ if (!key || typeof key !== 'string') {
     process.exit(0)
   }
 
-  const matchedHandlers: (HandlerInfo & {
-    packageInfo: PackageInfo
-  })[] = []
-
-  for (const plugin of plugins) {
-    const { instance, packageInfo } = plugin
-
-    const matched = instance.run({
-      key,
-      cliOptions,
-      packageInfo,
-      optionsList: Object.keys(cliOptions).filter(key => cliOptions[key] === true).map(key => `--${key}`)
-    }, ...others)
-
-    matchedHandlers.push(...matched.map(item => ({
-      handler: item.handler,
-      description: item.description,
-      packageInfo
-    })))
+  const ctx: Omit<InitxCtx, 'packageInfo'> = {
+    key,
+    cliOptions,
+    optionsList: Object.keys(cliOptions).filter(key => cliOptions[key] === true).map(key => `--${key}`)
   }
+
+  const matchedHandlers = matchPlugins(plugins, ctx, ...others)
 
   if (matchedHandlers.length === 0) {
     process.exit(0)
