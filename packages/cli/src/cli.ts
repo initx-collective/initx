@@ -3,7 +3,7 @@ import cac from 'cac'
 import { inquirer, log } from '@initx-plugin/utils'
 import { loadPlugins, matchPlugins } from '@initx-plugin/core'
 
-import type { InitxCtx } from '@initx-plugin/core'
+import type { InitxBaseContext } from '@initx-plugin/core'
 
 import pkgJson from '../package.json'
 
@@ -41,7 +41,7 @@ if (!key || typeof key !== 'string') {
     process.exit(0)
   }
 
-  const ctx: Omit<InitxCtx, 'packageInfo'> = {
+  const ctx: InitxBaseContext = {
     key,
     cliOptions,
     optionsList: Object.keys(cliOptions).filter(key => cliOptions[key] === true).map(key => `--${key}`)

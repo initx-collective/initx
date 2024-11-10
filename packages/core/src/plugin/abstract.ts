@@ -1,3 +1,5 @@
+import { writeStore } from '../store'
+
 import type { PackageInfo } from './utils'
 
 type MaybeArray<T> = T | T[]
@@ -17,12 +19,14 @@ type TypeMatchers = Record<string, BaseMatchers>
 
 type Matchers = MaybeArray<BaseMatchers> | TypeMatchers
 
+type PluginConfig = Record<string, any>
+
 export interface HandlerInfo {
   handler: () => MaybePromise<void>
   description: string
 }
 
-export interface InitxCtx {
+export interface InitxBaseContext {
   /**
    * Matching string
    *
@@ -38,11 +42,6 @@ export interface InitxCtx {
   cliOptions: Record<string, any>
 
   /**
-   * Package info
-   */
-  packageInfo: PackageInfo
-
-  /**
    * Options list
    *
    * cli options list, like
@@ -51,53 +50,69 @@ export interface InitxCtx {
   optionsList: string[]
 }
 
-export abstract class InitxPlugin {
-  abstract matchers: Matchers
-  abstract handle(options: InitxCtx, ...others: string[]): MaybePromise<void>
+export interface InitxContext<TConfig extends PluginConfig = PluginConfig> extends InitxBaseContext {
+  /**
+   * Store
+   *
+   * Store data in memory, and write to disk when the program exits
+   */
+  store: TConfig
 
-  public run(options: InitxCtx, ...others: string[]): HandlerInfo[] {
+  /**
+   * Package info
+   */
+  packageInfo: PackageInfo
+}
+
+export abstract class InitxPlugin<TConfig extends PluginConfig = PluginConfig> {
+  abstract matchers: Matchers
+  abstract handle(options: InitxContext<TConfig>, ...others: string[]): MaybePromise<void>
+
+  public defaultConfig?: TConfig
+
+  public run(context: InitxContext<TConfig>, ...others: string[]): HandlerInfo[] {
     // BaseMatchers
     if (this.isBaseMatchers(this.matchers)) {
-      return this.matchBaseMatchers(this.matchers, options, ...others)
+      return this.matchBaseMatchers(this.matchers, context, ...others)
     }
 
     // Array<BaseMatchers>
     if (this.isArrayBaseMatchers(this.matchers)) {
-      return this.matchArrayBaseMatchers(this.matchers, options, ...others)
+      return this.matchArrayBaseMatchers(this.matchers, context, ...others)
     }
 
     // TypeMatchers
     if (this.isObject(this.matchers)) {
-      return this.matchTypeMatchers(this.matchers, options, ...others)
+      return this.matchTypeMatchers(this.matchers, context, ...others)
     }
 
     return []
   }
 
   // BaseMatchers
-  private matchBaseMatchers(matchers: BaseMatchers, options: InitxCtx, ...others: string[]): HandlerInfo[] {
-    if (!this.isPassed(matchers.matching, options.key)) {
+  private matchBaseMatchers(matchers: BaseMatchers, context: InitxContext<TConfig>, ...others: string[]): HandlerInfo[] {
+    if (!this.isPassed(matchers.matching, context.key)) {
       return []
     }
 
     return [
       {
-        handler: () => this.handle(options, ...others),
+        handler: () => this.executeHandle(context, ...others),
         description: matchers.description
       }
     ]
   }
 
-  private matchArrayBaseMatchers(matchers: BaseMatchers[], options: InitxCtx, ...others: string[]): HandlerInfo[] {
+  private matchArrayBaseMatchers(matchers: BaseMatchers[], context: InitxContext<TConfig>, ...others: string[]): HandlerInfo[] {
     const handlers: HandlerInfo[] = []
 
     for (let i = 0; i < matchers.length; i++) {
       const matcher = matchers[i]
-      const isPassed = this.isPassed(matcher.matching, options.key)
+      const isPassed = this.isPassed(matcher.matching, context.key)
 
       if (isPassed) {
         handlers.push({
-          handler: () => this.handle(options, ...others),
+          handler: () => this.executeHandle(context, ...others),
           description: matcher.description
         })
       }
@@ -106,17 +121,17 @@ export abstract class InitxPlugin {
     return handlers
   }
 
-  private matchTypeMatchers(matchers: TypeMatchers, options: InitxCtx, ...others: string[]): HandlerInfo[] {
+  private matchTypeMatchers(matchers: TypeMatchers, context: InitxContext<TConfig>, ...others: string[]): HandlerInfo[] {
     const handlers: HandlerInfo[] = []
     const keys = Object.keys(matchers)
 
     for (let i = 0; i < keys.length; i++) {
       const matcher = matchers[keys[i]]
-      const isPassed = this.isPassed(matcher.matching, options.key)
+      const isPassed = this.isPassed(matcher.matching, context.key)
 
       if (isPassed) {
         handlers.push({
-          handler: () => this.handle(options, keys[i], ...others),
+          handler: () => this.executeHandle(context, keys[i], ...others),
           description: matcher.description
         })
       }
@@ -153,5 +168,10 @@ export abstract class InitxPlugin {
 
       return test.test(key)
     })
+  }
+
+  private async executeHandle(context: InitxContext<TConfig>, ...others: string[]) {
+    await this.handle(context, ...others)
+    writeStore(context.packageInfo.root)
   }
 }

@@ -1,7 +1,8 @@
 export {
   InitxPlugin,
 
-  type InitxCtx,
+  type InitxBaseContext,
+  type InitxContext,
   type HandlerInfo
 } from './abstract'
 
