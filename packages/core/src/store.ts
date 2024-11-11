@@ -3,17 +3,17 @@ import path from 'node:path'
 import fs from 'fs-extra'
 import { defu } from 'defu'
 
-interface Store {
-  rewrited: boolean
-  data?: Record<string, any>
-}
-
+const INITX_DIR = '.initx'
 const STORE_FILE_NAME = 'store.json'
+const REWRITED_FILE_NAME = '.rewrited'
 
-const stores = new Map<string, Store>()
+const resolveStore = (root: string) => path.resolve(root, INITX_DIR, STORE_FILE_NAME)
+const resolveRewrited = (root: string) => path.resolve(root, INITX_DIR, REWRITED_FILE_NAME)
 
 export function createStore(root: string, defaultStore: Record<string, any> = {}) {
-  const storePath = path.resolve(root, STORE_FILE_NAME)
+  fs.ensureDirSync(path.resolve(root, INITX_DIR))
+
+  const storePath = resolveStore(root)
 
   const generateResult = (resultData: Record<string, any>) => {
     writeJson(storePath, resultData)
@@ -39,17 +39,15 @@ export function createStore(root: string, defaultStore: Record<string, any> = {}
 }
 
 export function writeStore(root: string) {
-  const storePath = path.resolve(root, STORE_FILE_NAME)
+  const rewritedPath = resolveRewrited(root)
 
-  if (!stores.has(root)) {
+  if (!fs.existsSync(rewritedPath)) {
     return
   }
 
-  const store = stores.get(root)!
-
-  if (store.rewrited) {
-    fs.writeJsonSync(storePath, store.data || {})
-  }
+  const rewrited = fs.readJsonSync(rewritedPath)
+  writeJson(resolveStore(root), rewrited)
+  fs.removeSync(rewritedPath)
 }
 
 function writeJson(path: string, data: Record<string, any>) {
@@ -59,12 +57,6 @@ function writeJson(path: string, data: Record<string, any>) {
 }
 
 function useProxy(root: string, obj: Record<string, any> = {}) {
-  if (!stores.has(root)) {
-    stores.set(root, {
-      rewrited: false
-    })
-  }
-
   const isPlainObject = (value: any): boolean => {
     return Object.prototype.toString.call(value) === '[object Object]'
   }
@@ -79,14 +71,12 @@ function useProxy(root: string, obj: Record<string, any> = {}) {
         return value
       },
       set(target, key, value) {
-        stores.get(root)!.rewrited = true
-        return Reflect.set(target, key, value)
+        const success = Reflect.set(target, key, value)
+        fs.writeJsonSync(resolveRewrited(root), target)
+        return success
       }
     })
   }
 
-  const store = createDeepProxy(obj)
-  stores.get(root)!.data = store
-
-  return store
+  return createDeepProxy(obj)
 }
