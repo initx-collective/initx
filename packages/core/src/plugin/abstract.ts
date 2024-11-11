@@ -19,7 +19,7 @@ type TypeMatchers = Record<string, BaseMatchers>
 
 type Matchers = MaybeArray<BaseMatchers> | TypeMatchers
 
-type PluginConfig = Record<string, any>
+type PluginStore = Record<string, any>
 
 export interface HandlerInfo {
   handler: () => MaybePromise<void>
@@ -50,13 +50,13 @@ export interface InitxBaseContext {
   optionsList: string[]
 }
 
-export interface InitxContext<TConfig extends PluginConfig = PluginConfig> extends InitxBaseContext {
+export interface InitxContext<TStore extends PluginStore = PluginStore> extends InitxBaseContext {
   /**
    * Store
    *
    * Store data in memory, and write to disk when the program exits
    */
-  store: TConfig
+  store: TStore
 
   /**
    * Package info
@@ -64,7 +64,7 @@ export interface InitxContext<TConfig extends PluginConfig = PluginConfig> exten
   packageInfo: PackageInfo
 }
 
-export abstract class InitxPlugin<TStore extends PluginConfig = PluginConfig> {
+export abstract class InitxPlugin<TStore extends PluginStore = PluginStore> {
   abstract matchers: Matchers
   abstract handle(options: InitxContext<TStore>, ...others: string[]): MaybePromise<void>
 
