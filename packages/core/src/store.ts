@@ -6,12 +6,12 @@ import { defu } from 'defu'
 
 import type { PackageInfo } from './plugin'
 
+let rewritedCache: Record<string, any> | null = null
+
 const INITX_DIR = path.resolve(homedir(), '.initx')
 const STORE_FILE_NAME = 'store.json'
-const REWRITED_FILE_NAME = '.rewrited'
 
 const resolveStore = (name: string) => path.resolve(INITX_DIR, name, STORE_FILE_NAME)
-const resolveRewrited = (name: string) => path.resolve(INITX_DIR, name, REWRITED_FILE_NAME)
 
 export function createStore({ name }: PackageInfo, defaultStore: Record<string, any> = {}) {
   fs.ensureDirSync(path.resolve(INITX_DIR, name))
@@ -20,7 +20,7 @@ export function createStore({ name }: PackageInfo, defaultStore: Record<string, 
 
   const generateResult = (resultData: Record<string, any>) => {
     writeJson(storePath, resultData)
-    return useProxy(name, resultData)
+    return useProxy(resultData)
   }
 
   if (!fs.existsSync(storePath)) {
@@ -42,15 +42,11 @@ export function createStore({ name }: PackageInfo, defaultStore: Record<string, 
 }
 
 export function writeStore({ name }: PackageInfo) {
-  const rewritedPath = resolveRewrited(name)
-
-  if (!fs.existsSync(rewritedPath)) {
+  if (!rewritedCache) {
     return
   }
 
-  const rewrited = fs.readJsonSync(rewritedPath)
-  writeJson(resolveStore(name), rewrited)
-  fs.removeSync(rewritedPath)
+  writeJson(resolveStore(name), rewritedCache)
 }
 
 function writeJson(path: string, data: Record<string, any>) {
@@ -59,7 +55,7 @@ function writeJson(path: string, data: Record<string, any>) {
   })
 }
 
-function useProxy(name: string, obj: Record<string, any> = {}) {
+function useProxy(obj: Record<string, any> = {}) {
   const isPlainObject = (value: any): boolean => {
     return Object.prototype.toString.call(value) === '[object Object]'
   }
@@ -75,7 +71,7 @@ function useProxy(name: string, obj: Record<string, any> = {}) {
       },
       set(target, key, value) {
         const success = Reflect.set(target, key, value)
-        fs.writeJsonSync(resolveRewrited(name), target)
+        rewritedCache = target
         return success
       }
     })
