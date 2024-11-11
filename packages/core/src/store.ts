@@ -1,7 +1,7 @@
 import path from 'node:path'
 
 import fs from 'fs-extra'
-import defu from 'defu'
+import { defu } from 'defu'
 
 interface Store {
   rewrited: boolean
