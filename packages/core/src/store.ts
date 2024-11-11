@@ -1,23 +1,26 @@
 import path from 'node:path'
+import { homedir } from 'node:os'
 
 import fs from 'fs-extra'
 import { defu } from 'defu'
 
-const INITX_DIR = '.initx'
+import type { PackageInfo } from './plugin'
+
+const INITX_DIR = path.resolve(homedir(), '.initx')
 const STORE_FILE_NAME = 'store.json'
 const REWRITED_FILE_NAME = '.rewrited'
 
-const resolveStore = (root: string) => path.resolve(root, INITX_DIR, STORE_FILE_NAME)
-const resolveRewrited = (root: string) => path.resolve(root, INITX_DIR, REWRITED_FILE_NAME)
+const resolveStore = (name: string) => path.resolve(INITX_DIR, name, STORE_FILE_NAME)
+const resolveRewrited = (name: string) => path.resolve(INITX_DIR, name, REWRITED_FILE_NAME)
 
-export function createStore(root: string, defaultStore: Record<string, any> = {}) {
-  fs.ensureDirSync(path.resolve(root, INITX_DIR))
+export function createStore({ name }: PackageInfo, defaultStore: Record<string, any> = {}) {
+  fs.ensureDirSync(path.resolve(INITX_DIR, name))
 
-  const storePath = resolveStore(root)
+  const storePath = resolveStore(name)
 
   const generateResult = (resultData: Record<string, any>) => {
     writeJson(storePath, resultData)
-    return useProxy(root, resultData)
+    return useProxy(name, resultData)
   }
 
   if (!fs.existsSync(storePath)) {
@@ -38,15 +41,15 @@ export function createStore(root: string, defaultStore: Record<string, any> = {}
   return generateResult(json)
 }
 
-export function writeStore(root: string) {
-  const rewritedPath = resolveRewrited(root)
+export function writeStore({ name }: PackageInfo) {
+  const rewritedPath = resolveRewrited(name)
 
   if (!fs.existsSync(rewritedPath)) {
     return
   }
 
   const rewrited = fs.readJsonSync(rewritedPath)
-  writeJson(resolveStore(root), rewrited)
+  writeJson(resolveStore(name), rewrited)
   fs.removeSync(rewritedPath)
 }
 
@@ -56,7 +59,7 @@ function writeJson(path: string, data: Record<string, any>) {
   })
 }
 
-function useProxy(root: string, obj: Record<string, any> = {}) {
+function useProxy(name: string, obj: Record<string, any> = {}) {
   const isPlainObject = (value: any): boolean => {
     return Object.prototype.toString.call(value) === '[object Object]'
   }
@@ -72,7 +75,7 @@ function useProxy(root: string, obj: Record<string, any> = {}) {
       },
       set(target, key, value) {
         const success = Reflect.set(target, key, value)
-        fs.writeJsonSync(resolveRewrited(root), target)
+        fs.writeJsonSync(resolveRewrited(name), target)
         return success
       }
     })

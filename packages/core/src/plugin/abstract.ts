@@ -172,6 +172,6 @@ export abstract class InitxPlugin<TConfig extends PluginConfig = PluginConfig> {
 
   private async executeHandle(context: InitxContext<TConfig>, ...others: string[]) {
     await this.handle(context, ...others)
-    writeStore(context.packageInfo.root)
+    writeStore(context.packageInfo)
   }
 }

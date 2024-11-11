@@ -85,7 +85,7 @@ export function matchPlugins(
   for (const plugin of plugins) {
     const { instance, packageInfo } = plugin
 
-    const store = createStore(packageInfo.root, instance.defaultConfig)
+    const store = createStore(packageInfo, instance.defaultConfig)
     const matched = instance.run({
       key,
       store,
