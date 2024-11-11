@@ -64,13 +64,13 @@ export interface InitxContext<TConfig extends PluginConfig = PluginConfig> exten
   packageInfo: PackageInfo
 }
 
-export abstract class InitxPlugin<TConfig extends PluginConfig = PluginConfig> {
+export abstract class InitxPlugin<TStore extends PluginConfig = PluginConfig> {
   abstract matchers: Matchers
-  abstract handle(options: InitxContext<TConfig>, ...others: string[]): MaybePromise<void>
+  abstract handle(options: InitxContext<TStore>, ...others: string[]): MaybePromise<void>
 
-  public defaultConfig?: TConfig
+  public defaultStore?: TStore
 
-  public run(context: InitxContext<TConfig>, ...others: string[]): HandlerInfo[] {
+  public run(context: InitxContext<TStore>, ...others: string[]): HandlerInfo[] {
     // BaseMatchers
     if (this.isBaseMatchers(this.matchers)) {
       return this.matchBaseMatchers(this.matchers, context, ...others)
@@ -90,7 +90,7 @@ export abstract class InitxPlugin<TConfig extends PluginConfig = PluginConfig> {
   }
 
   // BaseMatchers
-  private matchBaseMatchers(matchers: BaseMatchers, context: InitxContext<TConfig>, ...others: string[]): HandlerInfo[] {
+  private matchBaseMatchers(matchers: BaseMatchers, context: InitxContext<TStore>, ...others: string[]): HandlerInfo[] {
     if (!this.isPassed(matchers.matching, context.key)) {
       return []
     }
@@ -103,7 +103,7 @@ export abstract class InitxPlugin<TConfig extends PluginConfig = PluginConfig> {
     ]
   }
 
-  private matchArrayBaseMatchers(matchers: BaseMatchers[], context: InitxContext<TConfig>, ...others: string[]): HandlerInfo[] {
+  private matchArrayBaseMatchers(matchers: BaseMatchers[], context: InitxContext<TStore>, ...others: string[]): HandlerInfo[] {
     const handlers: HandlerInfo[] = []
 
     for (let i = 0; i < matchers.length; i++) {
@@ -121,7 +121,7 @@ export abstract class InitxPlugin<TConfig extends PluginConfig = PluginConfig> {
     return handlers
   }
 
-  private matchTypeMatchers(matchers: TypeMatchers, context: InitxContext<TConfig>, ...others: string[]): HandlerInfo[] {
+  private matchTypeMatchers(matchers: TypeMatchers, context: InitxContext<TStore>, ...others: string[]): HandlerInfo[] {
     const handlers: HandlerInfo[] = []
     const keys = Object.keys(matchers)
 
@@ -170,7 +170,7 @@ export abstract class InitxPlugin<TConfig extends PluginConfig = PluginConfig> {
     })
   }
 
-  private async executeHandle(context: InitxContext<TConfig>, ...others: string[]) {
+  private async executeHandle(context: InitxContext<TStore>, ...others: string[]) {
     await this.handle(context, ...others)
     writeStore(context.packageInfo)
   }
