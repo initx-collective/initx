@@ -1,7 +1,7 @@
 {
   "name": "initx",
   "type": "module",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "packageManager": "pnpm@9.12.3",
   "description": "A more convenient scripting engine",
   "license": "MIT",
