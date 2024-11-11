@@ -13,6 +13,7 @@
 # Acknowledgement
 
 - [cac](https://github.com/cacjs/cac)
+- [defu](https://github.com/unjs/defu)
 - [execa](https://github.com/sindresorhus/execa)
 - [importx](https://github.com/antfu-collective/importx)
 - [inquirer](https://github.com/SBoudrias/Inquirer.js)
