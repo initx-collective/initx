@@ -30,10 +30,10 @@ export function writeStore(root: string) {
     return
   }
 
-  const data = stores.get(root)!
+  const store = stores.get(root)!
 
-  if (data.rewrited) {
-    fs.writeJsonSync(storePath, data.data || {})
+  if (store.rewrited) {
+    fs.writeJsonSync(storePath, store.data || {})
   }
 }
 
