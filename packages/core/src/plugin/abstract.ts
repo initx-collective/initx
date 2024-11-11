@@ -1,4 +1,4 @@
-import { writeStore } from '../store'
+import { createStore, writeStore } from '../store'
 
 import type { PackageInfo } from './utils'
 
@@ -50,18 +50,20 @@ export interface InitxBaseContext {
   optionsList: string[]
 }
 
-export interface InitxContext<TStore extends PluginStore = PluginStore> extends InitxBaseContext {
+export interface InitxRunContext extends InitxBaseContext {
+  /**
+   * Package info
+   */
+  packageInfo: PackageInfo
+}
+
+export interface InitxContext<TStore extends PluginStore = PluginStore> extends InitxRunContext {
   /**
    * Store
    *
    * Store data in memory, and write to disk when the program exits
    */
   store: TStore
-
-  /**
-   * Package info
-   */
-  packageInfo: PackageInfo
 }
 
 export abstract class InitxPlugin<TStore extends PluginStore = PluginStore> {
@@ -70,7 +72,7 @@ export abstract class InitxPlugin<TStore extends PluginStore = PluginStore> {
 
   public defaultStore?: TStore
 
-  public run(context: InitxContext<TStore>, ...others: string[]): HandlerInfo[] {
+  public run(context: InitxRunContext, ...others: string[]): HandlerInfo[] {
     // BaseMatchers
     if (this.isBaseMatchers(this.matchers)) {
       return this.matchBaseMatchers(this.matchers, context, ...others)
@@ -90,7 +92,7 @@ export abstract class InitxPlugin<TStore extends PluginStore = PluginStore> {
   }
 
   // BaseMatchers
-  private matchBaseMatchers(matchers: BaseMatchers, context: InitxContext<TStore>, ...others: string[]): HandlerInfo[] {
+  private matchBaseMatchers(matchers: BaseMatchers, context: InitxRunContext, ...others: string[]): HandlerInfo[] {
     if (!this.isPassed(matchers.matching, context.key)) {
       return []
     }
@@ -103,7 +105,7 @@ export abstract class InitxPlugin<TStore extends PluginStore = PluginStore> {
     ]
   }
 
-  private matchArrayBaseMatchers(matchers: BaseMatchers[], context: InitxContext<TStore>, ...others: string[]): HandlerInfo[] {
+  private matchArrayBaseMatchers(matchers: BaseMatchers[], context: InitxRunContext, ...others: string[]): HandlerInfo[] {
     const handlers: HandlerInfo[] = []
 
     for (let i = 0; i < matchers.length; i++) {
@@ -121,7 +123,7 @@ export abstract class InitxPlugin<TStore extends PluginStore = PluginStore> {
     return handlers
   }
 
-  private matchTypeMatchers(matchers: TypeMatchers, context: InitxContext<TStore>, ...others: string[]): HandlerInfo[] {
+  private matchTypeMatchers(matchers: TypeMatchers, context: InitxRunContext, ...others: string[]): HandlerInfo[] {
     const handlers: HandlerInfo[] = []
     const keys = Object.keys(matchers)
 
@@ -170,8 +172,9 @@ export abstract class InitxPlugin<TStore extends PluginStore = PluginStore> {
     })
   }
 
-  private async executeHandle(context: InitxContext<TStore>, ...others: string[]) {
-    await this.handle(context, ...others)
+  private async executeHandle(context: InitxRunContext, ...others: string[]) {
+    const store = createStore(context.packageInfo, this.defaultStore)
+    await this.handle({ ...context, store }, ...others)
     writeStore(context.packageInfo)
   }
 }

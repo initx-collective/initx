@@ -3,8 +3,6 @@ import path from 'node:path'
 import fs from 'fs-extra'
 import { c } from '@initx-plugin/utils'
 
-import { createStore } from '../store'
-
 import type { HandlerInfo, InitxBaseContext, InitxPlugin } from './abstract'
 
 type Constructor<T> = new (...args: any[]) => T
@@ -85,10 +83,8 @@ export function matchPlugins(
   for (const plugin of plugins) {
     const { instance, packageInfo } = plugin
 
-    const store = createStore(packageInfo, instance.defaultStore)
     const matched = instance.run({
       key,
-      store,
       cliOptions,
       packageInfo,
       optionsList: Object.keys(cliOptions).filter(key => cliOptions[key] === true).map(key => `--${key}`)
