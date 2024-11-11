@@ -59,6 +59,9 @@ importers:
       '@initx-plugin/utils':
         specifier: workspace:*
         version: link:../utils
+      defu:
+        specifier: ^6.1.4
+        version: 6.1.4
       fs-extra:
         specifier: ^11.2.0
         version: 11.2.0

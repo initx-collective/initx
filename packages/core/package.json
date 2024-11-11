@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@initx-plugin/utils": "workspace:*",
+    "defu": "^6.1.4",
     "fs-extra": "^11.2.0",
     "importx": "^0.5.0"
   },

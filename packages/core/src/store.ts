@@ -1,5 +1,7 @@
 import path from 'node:path'
+
 import fs from 'fs-extra'
+import defu from 'defu'
 
 interface Store {
   rewrited: boolean
@@ -13,14 +15,27 @@ const stores = new Map<string, Store>()
 export function createStore(root: string, defaultStore: Record<string, any> = {}) {
   const storePath = path.resolve(root, STORE_FILE_NAME)
 
-  if (!fs.existsSync(storePath)) {
-    fs.writeJsonSync(storePath, defaultStore)
-    return useProxy(root, defaultStore)
+  const generateResult = (resultData: Record<string, any>) => {
+    writeJson(storePath, resultData)
+    return useProxy(root, resultData)
   }
 
-  const json = fs.readJsonSync(storePath)
+  if (!fs.existsSync(storePath)) {
+    return generateResult(defaultStore)
+  }
 
-  return useProxy(root, json)
+  let json
+
+  try {
+    const fileJson = fs.readJsonSync(storePath)
+    json = defu(fileJson, defaultStore)
+  }
+  // eslint-disable-next-line unused-imports/no-unused-vars
+  catch (e) {
+    json = defaultStore
+  }
+
+  return generateResult(json)
 }
 
 export function writeStore(root: string) {
@@ -35,6 +50,12 @@ export function writeStore(root: string) {
   if (store.rewrited) {
     fs.writeJsonSync(storePath, store.data || {})
   }
+}
+
+function writeJson(path: string, data: Record<string, any>) {
+  fs.writeJsonSync(path, data, {
+    spaces: 2
+  })
 }
 
 function useProxy(root: string, obj: Record<string, any> = {}) {
