@@ -65,15 +65,15 @@ export async function fetchPlugins(): Promise<InitxPluginInfo[]> {
 }
 
 export async function loadPlugins(): Promise<LoadPluginResult[]> {
-  const pluginsName = await fetchPlugins()
+  const pluginsInfo = await fetchPlugins()
 
   const x = await import('importx')
-  return Promise.all(pluginsName.map(async ({ name, root }) => {
+  return Promise.all(pluginsInfo.map(async ({ root }) => {
     const InitxPluginClass: Constructor<InitxPlugin> = await x
       .import(root, import.meta.url)
       .then(x => x.default)
 
-    const packageAll = JSON.parse(fs.readFileSync(path.join(root, name, 'package.json'), 'utf-8'))
+    const packageAll = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf-8'))
     const packageInfo: PackageInfo = {
       root,
       name: packageAll.name,
