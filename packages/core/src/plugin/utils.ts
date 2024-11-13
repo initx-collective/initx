@@ -73,7 +73,7 @@ export async function loadPlugins(): Promise<LoadPluginResult[]> {
       .import(root, import.meta.url)
       .then(x => x.default)
 
-    const packageAll = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf-8'))
+    const packageAll = fs.readJsonSync(path.join(root, 'package.json'))
     const packageInfo: PackageInfo = {
       root,
       name: packageAll.name,
