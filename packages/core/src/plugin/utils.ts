@@ -17,6 +17,18 @@ export interface PackageInfo {
 }
 
 export interface InitxPluginInfo {
+  /**
+   * Plugin name
+   */
+  name: string
+
+  /**
+   * Plugin root path
+   */
+  root: string
+}
+
+export interface LoadPluginResult {
   packageInfo: PackageInfo
   instance: InitxPlugin
 }
@@ -25,7 +37,7 @@ export type MatchedPlugin = HandlerInfo & {
   packageInfo: PackageInfo
 }
 
-export async function loadPlugins(): Promise<InitxPluginInfo[]> {
+export async function fetchPlugins(): Promise<InitxPluginInfo[]> {
   const { content: npmPath } = await c('npm', ['config', 'get', 'prefix'])
   const nodeModules = path.join(npmPath as string, 'node_modules')
 
@@ -41,24 +53,29 @@ export async function loadPlugins(): Promise<InitxPluginInfo[]> {
     exclude: /@initx-plugin\/(?:core|utils)$/
   }
 
-  const pluginsName = [
+  return [
     ...officialPlugins,
     ...communityPlugins
   ].filter(
     name => regexps.plugin.test(name) && !regexps.exclude.test(name)
-  )
+  ).map(name => ({
+    name,
+    root: path.join(nodeModules, name)
+  }))
+}
+
+export async function loadPlugins(): Promise<LoadPluginResult[]> {
+  const pluginsName = await fetchPlugins()
 
   const x = await import('importx')
-  return Promise.all(pluginsName.map(async (dirname) => {
-    const pluginRoot = path.join(nodeModules, dirname)
-
+  return Promise.all(pluginsName.map(async ({ name, root }) => {
     const InitxPluginClass: Constructor<InitxPlugin> = await x
-      .import(pluginRoot, import.meta.url)
+      .import(root, import.meta.url)
       .then(x => x.default)
 
-    const packageAll = JSON.parse(fs.readFileSync(path.join(nodeModules, dirname, 'package.json'), 'utf-8'))
+    const packageAll = JSON.parse(fs.readFileSync(path.join(root, name, 'package.json'), 'utf-8'))
     const packageInfo: PackageInfo = {
-      root: pluginRoot,
+      root,
       name: packageAll.name,
       version: packageAll.version,
       description: packageAll.description,
@@ -69,12 +86,12 @@ export async function loadPlugins(): Promise<InitxPluginInfo[]> {
     return {
       packageInfo,
       instance: new InitxPluginClass()
-    } as InitxPluginInfo
+    } as LoadPluginResult
   }))
 }
 
 export function matchPlugins(
-  plugins: InitxPluginInfo[],
+  plugins: LoadPluginResult[],
   { key, cliOptions }: InitxBaseContext,
   ...others: string[]
 ): MatchedPlugin[] {
