@@ -10,6 +10,10 @@
 - [@initx-plugin/gpg](https://github.com/initx-collective/initx-plugin-gpg)
 - [@initx-plugin/cp](https://github.com/initx-collective/initx-plugin-cp)
 
+You can use [@initx-plugin/manager](https://github.com/initx-collective/initx-plugin-manager) to manage plugins
+
+Use [initx-plugin-starter](https://github.com/initx-collective/initx-plugin-starter) to get started
+
 # Acknowledgement
 
 - [cac](https://github.com/cacjs/cac)
