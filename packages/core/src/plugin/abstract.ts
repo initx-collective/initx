@@ -175,6 +175,6 @@ export abstract class InitxPlugin<TStore extends PluginStore = PluginStore> {
   private async executeHandle(context: InitxRunContext, ...others: string[]) {
     const store = createStore(context.packageInfo, this.defaultStore)
     await this.handle({ ...context, store }, ...others)
-    writeStore(context.packageInfo)
+    writeStore(context.packageInfo.name)
   }
 }

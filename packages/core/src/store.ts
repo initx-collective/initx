@@ -41,7 +41,7 @@ export function createStore({ name }: PackageInfo, defaultStore: Record<string, 
   return generateResult(json)
 }
 
-export function writeStore({ name }: PackageInfo) {
+export function writeStore(name: string) {
   if (!rewritedCache) {
     return
   }
