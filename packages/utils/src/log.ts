@@ -1,5 +1,6 @@
 import c from 'picocolors'
 
+/* eslint-disable no-console */
 export const log = {
   success: (msg: string) => console.log(`${c.bgGreen(c.black(' SUCCESS '))} ${msg}`),
   info: (msg: string) => console.log(`${c.bgBlue(c.white(' INFO '))} ${msg}`),

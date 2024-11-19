@@ -1,3 +1,5 @@
+import process from 'node:process'
+
 import cac from 'cac'
 
 import { inquirer, log } from '@initx-plugin/utils'
@@ -22,6 +24,7 @@ if (cliOptions.h || cliOptions.help) {
 }
 
 if (cliOptions.v || cliOptions.version) {
+  // eslint-disable-next-line no-console
   console.log(pkgJson.version)
   process.exit(0)
 }
@@ -56,7 +59,7 @@ if (!key || typeof key !== 'string') {
   if (matchedHandlers.length === 1) {
     const [{ handler }] = matchedHandlers
     await handler()
-    return
+    process.exit(0)
   }
 
   const index = await inquirer.select(
