@@ -4,8 +4,6 @@ import { homedir } from 'node:os'
 import fs from 'fs-extra'
 import { defu } from 'defu'
 
-import type { PackageInfo } from './plugin'
-
 let rewritedCache: Record<string, any> | null = null
 
 const INITX_DIR = path.resolve(homedir(), '.initx')
@@ -13,7 +11,7 @@ const STORE_FILE_NAME = 'store.json'
 
 const resolveStore = (name: string) => path.resolve(INITX_DIR, name, STORE_FILE_NAME)
 
-export function createStore({ name }: PackageInfo, defaultStore: Record<string, any> = {}) {
+export function createStore(name: string, defaultStore: Record<string, any> = {}) {
   fs.ensureDirSync(path.resolve(INITX_DIR, name))
 
   const storePath = resolveStore(name)
