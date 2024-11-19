@@ -68,7 +68,7 @@ export interface InitxContext<TStore extends PluginStore = PluginStore> extends 
 
 export abstract class InitxPlugin<TStore extends PluginStore = PluginStore> {
   abstract matchers: Matchers
-  abstract handle(options: InitxContext<TStore>, ...others: string[]): MaybePromise<void>
+  abstract handle(context: InitxContext<TStore>, ...others: string[]): MaybePromise<void>
 
   public defaultStore?: TStore
 
