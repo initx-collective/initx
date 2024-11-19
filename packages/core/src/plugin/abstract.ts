@@ -1,4 +1,4 @@
-import { type Matchers, useInitxMatcher } from '../matcher'
+import { type MatcherOthers, type MatcherOthersDefault, type Matchers, useInitxMatcher } from '../matcher'
 import { createStore, writeStore } from '../store'
 import type { MaybePromise } from '../types'
 
@@ -52,7 +52,7 @@ export interface InitxContext<TStore extends PluginStore = PluginStore> extends 
 }
 
 export abstract class InitxPlugin<TStore extends PluginStore = PluginStore> {
-  abstract matchers: Matchers
+  abstract matchers: Matchers<MatcherOthers<MatcherOthersDefault>>
   abstract handle(context: InitxContext<TStore>, ...others: string[]): MaybePromise<void>
 
   public defaultStore?: TStore
