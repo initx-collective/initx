@@ -1,4 +1,4 @@
-import { type MatcherOthers, type MatcherOthersDefault, type Matchers, useInitxMatcher } from '../matcher'
+import { type Matcher, type MatcherOthers, type MatcherOthersDefault, type Matchers, useInitxMatcher } from '../matcher'
 import { createStore, writeStore } from '../store'
 import type { MaybePromise } from '../types'
 
@@ -42,25 +42,38 @@ export interface InitxRunContext extends InitxBaseContext {
   packageInfo: PackageInfo
 }
 
-export interface InitxContext<TStore extends PluginStore = PluginStore> extends InitxRunContext {
+export interface InitxContext<
+  TStore extends PluginStore = PluginStore,
+  TMatcher extends MatcherOthers<MatcherOthersDefault> = MatcherOthers<MatcherOthersDefault>
+> extends InitxRunContext {
   /**
    * Store
    *
    * Store data in memory, and write to disk when the program exits
    */
   store: TStore
+
+  /**
+   * Matcher
+   *
+   * Matched matcher object, you can get custom fields, excluded `matching`
+   */
+  matcher: Matcher<TMatcher>
 }
 
-export abstract class InitxPlugin<TStore extends PluginStore = PluginStore> {
-  abstract matchers: Matchers<MatcherOthers<MatcherOthersDefault>>
-  abstract handle(context: InitxContext<TStore>, ...others: string[]): MaybePromise<void>
+export abstract class InitxPlugin<
+  TStore extends PluginStore = PluginStore,
+  TMatcher extends MatcherOthers = MatcherOthers
+> {
+  abstract matchers: Matchers
+  abstract handle(context: InitxContext<TStore, TMatcher>, ...others: string[]): MaybePromise<void>
 
   public defaultStore?: TStore
 
   public run(context: InitxRunContext, ...others: string[]): HandlerInfo[] {
     const initxMatcher = useInitxMatcher<HandlerInfo>(
       (matcher, ...others) => ({
-        handler: () => this.executeHandle(context, ...others),
+        handler: () => this.executeHandle(context, matcher, ...others),
         description: matcher.description
       })
     )
@@ -74,9 +87,14 @@ export abstract class InitxPlugin<TStore extends PluginStore = PluginStore> {
     return matchedHandlers
   }
 
-  private async executeHandle(context: InitxRunContext, ...others: string[]) {
+  private async executeHandle<
+    TMatcher extends MatcherOthers<MatcherOthersDefault>
+  >(context: InitxRunContext,
+    matcher: Matcher<TMatcher>,
+    ...others: string[]
+  ) {
     const store = createStore(context.packageInfo.name, this.defaultStore)
-    await this.handle({ ...context, store }, ...others)
+    await this.handle({ ...context, matcher, store }, ...others)
     writeStore(context.packageInfo.name)
   }
 }

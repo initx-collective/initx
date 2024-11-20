@@ -18,25 +18,27 @@ interface MatcherSetup {
   matching: MaybeArray<string | RegExp>
 }
 
-type ResultFunction<TResult, TMatcher> = (matcher: TMatcher & MatcherCommon, ...others: string[]) => TResult & TMatcher
+export type Matcher<TMatcher> = TMatcher & MatcherCommon
 
-type BaseMatchers<TMatcher> = TMatcher & MatcherCommon & MatcherSetup
+type ResultFunction<TResult, TMatcher> = (matcher: Matcher<TMatcher>, ...others: string[]) => TResult & TMatcher
+
+type BaseMatchers<TMatcher> = Matcher<TMatcher> & MatcherSetup
 
 type TypeMatchers<TMatcher> = Record<string, BaseMatchers<TMatcher>>
 
 export type MatcherOthersDefault = Record<any, any>
-
 export type MatcherOthers<T extends MatcherOthersDefault = MatcherOthersDefault> = T
-export type Matchers<TMatcher = MatcherOthers> = MaybeArray<BaseMatchers<TMatcher>> | TypeMatchers<TMatcher>
 
-class InitxMatcher<TResult, TMatcher extends MatcherOthers> {
+export type Matchers<TMatcher extends MatcherOthers = MatcherOthers> = MaybeArray<BaseMatchers<TMatcher>> | TypeMatchers<TMatcher>
+
+class InitxMatcher<TResult, TMatcher extends Matcher<MatcherOthers>> {
   private resultFunction: ResultFunction<TResult, TMatcher>
 
   constructor(fn: ResultFunction<TResult, TMatcher>) {
     this.resultFunction = fn
   }
 
-  public match(matchers: Matchers<TMatcher>, key: string, ...others: string[]): (TResult & TMatcher)[] {
+  public match(matchers: Matchers, key: string, ...others: string[]): (TResult & TMatcher)[] {
     // BaseMatchers
     if (this.isBaseMatchers(matchers)) {
       return this.matchBaseMatchers(matchers, key, ...others)
@@ -162,6 +164,9 @@ class InitxMatcher<TResult, TMatcher extends MatcherOthers> {
   }
 }
 
-export function useInitxMatcher<TResult, TMatcher extends MatcherOthers = MatcherOthers>(fn: ResultFunction<TResult, TMatcher>) {
+export function useInitxMatcher<
+  TResult,
+  TMatcher extends Matcher<MatcherOthers> = Matcher<MatcherOthers>
+>(fn: ResultFunction<TResult, TMatcher>) {
   return new InitxMatcher<TResult, TMatcher>(fn)
 }
