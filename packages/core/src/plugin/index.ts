@@ -1,18 +1,5 @@
-export {
-  InitxPlugin,
+export type { HandlerInfo, InitxBaseContext, InitxContext } from './abstract'
+export { InitxPlugin } from './abstract'
 
-  type InitxBaseContext,
-  type InitxContext,
-  type HandlerInfo
-} from './abstract'
-
-export {
-  fetchPlugins,
-  loadPlugins,
-  matchPlugins,
-
-  type InitxPluginInfo,
-  type LoadPluginResult,
-  type PackageInfo,
-  type MatchedPlugin
-} from './utils'
+export type { InitxPluginInfo, LoadPluginResult, MatchedPlugin, PackageInfo } from './utils'
+export { fetchPlugins, loadPlugins, matchPlugins } from './utils'

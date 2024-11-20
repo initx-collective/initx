@@ -1,5 +1,6 @@
-import _inquirer from 'inquirer'
 import type { SelectOptions } from './types'
+
+import _inquirer from 'inquirer'
 
 async function confirm(message: string) {
   const { result } = await _inquirer.prompt([

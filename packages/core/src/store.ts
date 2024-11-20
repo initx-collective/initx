@@ -1,8 +1,8 @@
-import path from 'node:path'
 import { homedir } from 'node:os'
+import path from 'node:path'
 
-import fs from 'fs-extra'
 import { defu } from 'defu'
+import fs from 'fs-extra'
 
 let rewritedCache: Record<string, any> | null = null
 

@@ -1,9 +1,9 @@
-import path from 'node:path'
+import type { HandlerInfo, InitxBaseContext, InitxPlugin } from './abstract'
 
-import fs from 'fs-extra'
+import path from 'node:path'
 import { c } from '@initx-plugin/utils'
 
-import type { HandlerInfo, InitxBaseContext, InitxPlugin } from './abstract'
+import fs from 'fs-extra'
 
 type Constructor<T> = new (...args: any[]) => T
 

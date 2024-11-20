@@ -1,11 +1,11 @@
+import type { InitxBaseContext } from '@initx-plugin/core'
+
 import process from 'node:process'
 
-import cac from 'cac'
-
-import { inquirer, log } from '@initx-plugin/utils'
 import { loadPlugins, matchPlugins } from '@initx-plugin/core'
+import { inquirer, log } from '@initx-plugin/utils'
 
-import type { InitxBaseContext } from '@initx-plugin/core'
+import cac from 'cac'
 
 import pkgJson from '../package.json'
 
@@ -24,7 +24,6 @@ if (cliOptions.h || cliOptions.help) {
 }
 
 if (cliOptions.v || cliOptions.version) {
-  // eslint-disable-next-line no-console
   console.log(pkgJson.version)
   process.exit(0)
 }
