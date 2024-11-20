@@ -1,14 +1,5 @@
 import type { MaybeArray } from '../types'
 
-interface MatcherCommon {
-  /**
-   * Description of the handler
-   *
-   * If multiple handlers are matched, this description will be displayed
-   */
-  description: string
-}
-
 interface MatcherSetup {
   /**
    * Matching string or RegExp
@@ -18,18 +9,14 @@ interface MatcherSetup {
   matching: MaybeArray<string | RegExp>
 }
 
-export type Matcher<TMatcher> = TMatcher & MatcherCommon
-
-type ResultFunction<TResult, TMatcher> = (matcher: Matcher<TMatcher>, ...others: string[]) => TResult
-
-type BaseMatchers<TMatcher> = Matcher<TMatcher> & MatcherSetup
-
+type BaseMatchers<TMatcher> = TMatcher & MatcherSetup
 type TypeMatchers<TMatcher> = Record<string, BaseMatchers<TMatcher>>
 
-export type MatcherOthers = Record<any, any>
-export type Matchers<TMatcher extends MatcherOthers = object> = MaybeArray<BaseMatchers<TMatcher>> | TypeMatchers<TMatcher>
+type ResultFunction<TResult, TMatcher> = (matcher: TMatcher, ...others: string[]) => TResult
 
-class InitxMatcher<TResult, TMatcher extends MatcherOthers> {
+export type Matchers<TMatcher extends object = object> = MaybeArray<BaseMatchers<TMatcher>> | TypeMatchers<TMatcher>
+
+class InitxMatcher<TResult, TMatcher extends object> {
   private resultFunction: ResultFunction<TResult, TMatcher>
 
   constructor(fn: ResultFunction<TResult, TMatcher>) {
@@ -101,7 +88,7 @@ class InitxMatcher<TResult, TMatcher extends MatcherOthers> {
     return handlers
   }
 
-  private isBaseMatchers(matchers: Matchers): matchers is BaseMatchers<TMatcher> {
+  private isBaseMatchers(matchers: Matchers<TMatcher>): matchers is BaseMatchers<TMatcher> {
     const keys = Object.keys(matchers)
 
     const requiredKeys = ['matching', 'description']
@@ -113,7 +100,7 @@ class InitxMatcher<TResult, TMatcher extends MatcherOthers> {
     )
   }
 
-  private isArrayBaseMatchers(matchers: Matchers): matchers is BaseMatchers<TMatcher>[] {
+  private isArrayBaseMatchers(matchers: Matchers<TMatcher>): matchers is BaseMatchers<TMatcher>[] {
     return Array.isArray(matchers) && matchers.every(this.isBaseMatchers.bind(this))
   }
 
@@ -137,12 +124,12 @@ class InitxMatcher<TResult, TMatcher extends MatcherOthers> {
     })
   }
 
-  private omit<T>(obj: Record<string, unknown>, keys: string[]) {
-    const result: Record<string, unknown> = {}
+  private omit<T>(obj: Record<string, any>, keys: string[]) {
+    const result: Record<string, any> = {}
 
     for (const key in obj) {
       if (!keys.includes(key)) {
-        result[key] = obj[key]
+        result[key] = obj[key] as unknown
       }
     }
 
@@ -150,7 +137,7 @@ class InitxMatcher<TResult, TMatcher extends MatcherOthers> {
   }
 
   private buildResultMatcher(matcher: BaseMatchers<TMatcher>) {
-    return this.omit<TMatcher & MatcherCommon>(matcher, ['matching'])
+    return this.omit<TMatcher>(matcher, ['matching'])
   }
 
   private buildResultFunction(matcher: BaseMatchers<TMatcher>, ...others: string[]): TResult {
@@ -164,7 +151,7 @@ class InitxMatcher<TResult, TMatcher extends MatcherOthers> {
 
 export function useInitxMatcher<
   TResult,
-  TMatcher extends MatcherOthers = MatcherOthers
+  TMatcher extends object = object
 >(fn: ResultFunction<TResult, TMatcher>) {
   return new InitxMatcher<TResult, TMatcher>(fn)
 }

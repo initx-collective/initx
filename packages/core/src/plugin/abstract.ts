@@ -1,10 +1,19 @@
 import type { MaybePromise } from '../types'
-import type { PackageInfo } from './utils'
-import { type Matcher, type MatcherOthers, type Matchers, useInitxMatcher } from '../matcher'
 
+import type { PackageInfo } from './utils'
+import { type Matchers, useInitxMatcher } from '../matcher'
 import { createStore, writeStore } from '../store'
 
-type PluginStore = Record<string, any>
+type InitxMatcher<TMatcher extends object = object> = TMatcher & {
+  /**
+   * Description of the handler
+   *
+   * If multiple handlers are matched, this description will be displayed
+   */
+  description: string
+}
+
+export type InitxMatchers<TMatcher extends object = object> = Matchers<InitxMatcher<TMatcher>>
 
 export interface HandlerInfo {
   handler: () => MaybePromise<void>
@@ -43,8 +52,8 @@ export interface InitxRunContext extends InitxBaseContext {
 }
 
 export interface InitxContext<
-  TStore extends PluginStore = object,
-  TMatcher extends MatcherOthers = object
+  TStore extends object = object,
+  TMatcher extends object = object
 > extends InitxRunContext {
   /**
    * Store
@@ -58,19 +67,19 @@ export interface InitxContext<
    *
    * Matched matcher object, you can get custom fields, excluded `matching`
    */
-  matcher: Matcher<TMatcher>
+  matcher: InitxMatcher<TMatcher>
 }
 
 export abstract class InitxPlugin<
-  TStore extends PluginStore = PluginStore
+  TStore extends object = object
 > {
-  abstract matchers: Matchers
-  abstract handle(context: InitxContext<TStore>, ...others: string[]): MaybePromise<void>
+  abstract matchers: InitxMatchers
+  abstract handle(context: InitxContext, ...others: string[]): MaybePromise<void>
 
   public defaultStore?: TStore
 
   public run(context: InitxRunContext, ...others: string[]): HandlerInfo[] {
-    const initxMatcher = useInitxMatcher<HandlerInfo>(
+    const initxMatcher = useInitxMatcher<HandlerInfo, InitxMatcher>(
       (matcher, ...others) => ({
         handler: () => this.executeHandle(context, matcher, ...others),
         description: matcher.description
@@ -87,9 +96,9 @@ export abstract class InitxPlugin<
   }
 
   private async executeHandle<
-    TMatcher extends MatcherOthers
+    TMatcher extends object
   >(context: InitxRunContext,
-    matcher: Matcher<TMatcher>,
+    matcher: InitxMatcher<TMatcher>,
     ...others: string[]
   ) {
     const store = createStore(context.packageInfo.name, this.defaultStore)
