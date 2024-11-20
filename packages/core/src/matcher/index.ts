@@ -20,7 +20,7 @@ interface MatcherSetup {
 
 export type Matcher<TMatcher> = TMatcher & MatcherCommon
 
-type ResultFunction<TResult, TMatcher> = (matcher: Matcher<TMatcher>, ...others: string[]) => TResult & TMatcher
+type ResultFunction<TResult, TMatcher> = (matcher: Matcher<TMatcher>, ...others: string[]) => TResult
 
 type BaseMatchers<TMatcher> = Matcher<TMatcher> & MatcherSetup
 
@@ -29,14 +29,14 @@ type TypeMatchers<TMatcher> = Record<string, BaseMatchers<TMatcher>>
 export type MatcherOthers = Record<any, any>
 export type Matchers<TMatcher extends MatcherOthers = object> = MaybeArray<BaseMatchers<TMatcher>> | TypeMatchers<TMatcher>
 
-class InitxMatcher<TResult, TMatcher extends Matcher<MatcherOthers>> {
+class InitxMatcher<TResult, TMatcher extends MatcherOthers> {
   private resultFunction: ResultFunction<TResult, TMatcher>
 
   constructor(fn: ResultFunction<TResult, TMatcher>) {
     this.resultFunction = fn
   }
 
-  public match(matchers: Matchers, key: string, ...others: string[]): (TResult & TMatcher)[] {
+  public match(matchers: Matchers<TMatcher>, key: string, ...others: string[]): TResult[] {
     // BaseMatchers
     if (this.isBaseMatchers(matchers)) {
       return this.matchBaseMatchers(matchers, key, ...others)
@@ -67,7 +67,7 @@ class InitxMatcher<TResult, TMatcher extends Matcher<MatcherOthers>> {
   }
 
   private matchArrayBaseMatchers(matchers: BaseMatchers<TMatcher>[], key: string, ...others: string[]) {
-    const handlers: (TResult & TMatcher)[] = []
+    const handlers: TResult[] = []
 
     for (let i = 0; i < matchers.length; i++) {
       const matcher = matchers[i]
@@ -84,7 +84,7 @@ class InitxMatcher<TResult, TMatcher extends Matcher<MatcherOthers>> {
   }
 
   private matchTypeMatchers(matchers: TypeMatchers<TMatcher>, key: string, ...others: string[]) {
-    const handlers: (TResult & TMatcher)[] = []
+    const handlers: TResult[] = []
     const keys = Object.keys(matchers)
 
     for (let i = 0; i < keys.length; i++) {
@@ -153,7 +153,7 @@ class InitxMatcher<TResult, TMatcher extends Matcher<MatcherOthers>> {
     return this.omit<TMatcher & MatcherCommon>(matcher, ['matching'])
   }
 
-  private buildResultFunction(matcher: BaseMatchers<TMatcher>, ...others: string[]): (TResult & TMatcher) {
+  private buildResultFunction(matcher: BaseMatchers<TMatcher>, ...others: string[]): TResult {
     const buildedMatcher = this.buildResultMatcher(matcher)
     return this.resultFunction(
       buildedMatcher,
@@ -164,7 +164,7 @@ class InitxMatcher<TResult, TMatcher extends Matcher<MatcherOthers>> {
 
 export function useInitxMatcher<
   TResult,
-  TMatcher extends Matcher<MatcherOthers> = Matcher<MatcherOthers>
+  TMatcher extends MatcherOthers = MatcherOthers
 >(fn: ResultFunction<TResult, TMatcher>) {
   return new InitxMatcher<TResult, TMatcher>(fn)
 }
