@@ -91,7 +91,7 @@ class InitxMatcher<TResult, TMatcher extends object> {
   private isBaseMatchers(matchers: Matchers<TMatcher>): matchers is BaseMatchers<TMatcher> {
     const keys = Object.keys(matchers)
 
-    const requiredKeys = ['matching', 'description']
+    const requiredKeys: [keyof MatcherSetup] = ['matching']
 
     return (
       this.isObject(matchers)
