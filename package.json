@@ -25,7 +25,7 @@
     "prepare": "simple-git-hooks"
   },
   "devDependencies": {
-    "@imba97/eslint-config": "^0.0.4",
+    "@imba97/eslint-config": "^0.0.5",
     "@types/node": "^22.9.1",
     "bumpp": "^9.8.1",
     "defu": "^6.1.4",
