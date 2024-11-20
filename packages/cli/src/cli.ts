@@ -3,7 +3,7 @@ import type { InitxBaseContext } from '@initx-plugin/core'
 import process from 'node:process'
 
 import { loadPlugins, matchPlugins } from '@initx-plugin/core'
-import { inquirer, log } from '@initx-plugin/utils'
+import { inquirer, loadingFunction, log } from '@initx-plugin/utils'
 
 import cac from 'cac'
 
@@ -36,7 +36,7 @@ if (!key || typeof key !== 'string') {
 }
 
 ; (async function () {
-  const plugins = await loadPlugins()
+  const plugins = await loadingFunction('Loading plugins', loadPlugins)
 
   if (plugins.length === 0) {
     log.error('No plugin installed')
