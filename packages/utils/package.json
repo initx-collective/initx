@@ -2,7 +2,7 @@
   "name": "@initx-plugin/utils",
   "type": "module",
   "version": "0.0.23",
-  "packageManager": "pnpm@9.12.3",
+  "packageManager": "pnpm@9.14.2",
   "description": "A more convenient scripting engine",
   "license": "MIT",
   "homepage": "https://github.com/initx-collective/initx#readme",
@@ -37,7 +37,7 @@
     "build": "unbuild"
   },
   "dependencies": {
-    "inquirer": "^12.0.1",
+    "inquirer": "^12.1.0",
     "picocolors": "^1.1.1",
     "tinyexec": "^0.3.1",
     "which": "^5.0.0"
