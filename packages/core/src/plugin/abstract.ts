@@ -1,8 +1,8 @@
-import { type Matcher, type MatcherOthers, type MatcherOthersDefault, type Matchers, useInitxMatcher } from '../matcher'
-import { createStore, writeStore } from '../store'
 import type { MaybePromise } from '../types'
-
 import type { PackageInfo } from './utils'
+import { type Matcher, type MatcherOthers, type Matchers, useInitxMatcher } from '../matcher'
+
+import { createStore, writeStore } from '../store'
 
 type PluginStore = Record<string, any>
 
@@ -43,8 +43,8 @@ export interface InitxRunContext extends InitxBaseContext {
 }
 
 export interface InitxContext<
-  TStore extends PluginStore = PluginStore,
-  TMatcher extends MatcherOthers<MatcherOthersDefault> = MatcherOthers<MatcherOthersDefault>
+  TStore extends PluginStore = object,
+  TMatcher extends MatcherOthers = object
 > extends InitxRunContext {
   /**
    * Store
@@ -62,11 +62,10 @@ export interface InitxContext<
 }
 
 export abstract class InitxPlugin<
-  TStore extends PluginStore = PluginStore,
-  TMatcher extends MatcherOthers = MatcherOthers
+  TStore extends PluginStore = PluginStore
 > {
   abstract matchers: Matchers
-  abstract handle(context: InitxContext<TStore, TMatcher>, ...others: string[]): MaybePromise<void>
+  abstract handle(context: InitxContext<TStore>, ...others: string[]): MaybePromise<void>
 
   public defaultStore?: TStore
 
@@ -88,7 +87,7 @@ export abstract class InitxPlugin<
   }
 
   private async executeHandle<
-    TMatcher extends MatcherOthers<MatcherOthersDefault>
+    TMatcher extends MatcherOthers
   >(context: InitxRunContext,
     matcher: Matcher<TMatcher>,
     ...others: string[]

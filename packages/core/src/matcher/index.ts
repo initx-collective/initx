@@ -26,10 +26,8 @@ type BaseMatchers<TMatcher> = Matcher<TMatcher> & MatcherSetup
 
 type TypeMatchers<TMatcher> = Record<string, BaseMatchers<TMatcher>>
 
-export type MatcherOthersDefault = Record<any, any>
-export type MatcherOthers<T extends MatcherOthersDefault = MatcherOthersDefault> = T
-
-export type Matchers<TMatcher extends MatcherOthers = MatcherOthers> = MaybeArray<BaseMatchers<TMatcher>> | TypeMatchers<TMatcher>
+export type MatcherOthers = Record<any, any>
+export type Matchers<TMatcher extends MatcherOthers = object> = MaybeArray<BaseMatchers<TMatcher>> | TypeMatchers<TMatcher>
 
 class InitxMatcher<TResult, TMatcher extends Matcher<MatcherOthers>> {
   private resultFunction: ResultFunction<TResult, TMatcher>
@@ -51,7 +49,7 @@ class InitxMatcher<TResult, TMatcher extends Matcher<MatcherOthers>> {
 
     // TypeMatchers
     if (this.isObject(matchers)) {
-      return this.matchTypeMatchers(matchers, key, ...others)
+      return this.matchTypeMatchers(matchers as TypeMatchers<TMatcher>, key, ...others)
     }
 
     return []
@@ -103,7 +101,7 @@ class InitxMatcher<TResult, TMatcher extends Matcher<MatcherOthers>> {
     return handlers
   }
 
-  private isBaseMatchers(matchers: Matchers<TMatcher>): matchers is BaseMatchers<TMatcher> {
+  private isBaseMatchers(matchers: Matchers): matchers is BaseMatchers<TMatcher> {
     const keys = Object.keys(matchers)
 
     const requiredKeys = ['matching', 'description']
@@ -115,7 +113,7 @@ class InitxMatcher<TResult, TMatcher extends Matcher<MatcherOthers>> {
     )
   }
 
-  private isArrayBaseMatchers(matchers: Matchers<TMatcher>): matchers is BaseMatchers<TMatcher>[] {
+  private isArrayBaseMatchers(matchers: Matchers): matchers is BaseMatchers<TMatcher>[] {
     return Array.isArray(matchers) && matchers.every(this.isBaseMatchers.bind(this))
   }
 
