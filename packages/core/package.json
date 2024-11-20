@@ -1,7 +1,7 @@
 {
   "name": "@initx-plugin/core",
   "type": "module",
-  "version": "0.0.24",
+  "version": "0.0.25",
   "packageManager": "pnpm@9.14.2",
   "description": "core module for initx plugins",
   "license": "MIT",
