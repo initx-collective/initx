@@ -38,8 +38,7 @@ export type MatchedPlugin = HandlerInfo & {
 }
 
 export async function fetchPlugins(): Promise<InitxPluginInfo[]> {
-  const { content: npmPath } = await c('npm', ['config', 'get', 'prefix'])
-  const nodeModules = path.join(npmPath as string, 'node_modules')
+  const { content: nodeModules } = await c('npm', ['root', '-g'])
 
   const communityPlugins = fs.readdirSync(nodeModules)
 
