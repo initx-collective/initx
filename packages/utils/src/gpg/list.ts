@@ -22,8 +22,13 @@ export async function gpgList() {
     email: ''
   }
 
+  const gpgRegExp = {
+    key: /^\s+(\w{40})$/,
+    user: /\s(\w+)\s<([\w-]+@[\w-]+(?:\.[\w-]+)+)>/
+  }
+
   lines.forEach((line) => {
-    const [, key] = /^\s+(\w{40})$/.exec(line) || []
+    const [, key] = gpgRegExp.key.exec(line) || []
 
     if (key) {
       data.key = key
@@ -31,7 +36,7 @@ export async function gpgList() {
     }
 
     if (line.startsWith('uid')) {
-      const [, name, email] = /\s(\w+)\s<([\w-]+@[\w-]+(?:\.[\w-]+)+)>/.exec(line) || []
+      const [, name, email] = gpgRegExp.user.exec(line) || []
       data.name = name
       data.email = email
       return
