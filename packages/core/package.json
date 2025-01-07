@@ -2,7 +2,7 @@
   "name": "@initx-plugin/core",
   "type": "module",
   "version": "0.0.27",
-  "packageManager": "pnpm@9.14.2",
+  "packageManager": "pnpm@9.15.3",
   "description": "core module for initx plugins",
   "license": "MIT",
   "homepage": "https://github.com/initx-collective/initx#readme",
@@ -30,7 +30,7 @@
     "@initx-plugin/utils": "workspace:*",
     "defu": "^6.1.4",
     "fs-extra": "^11.2.0",
-    "importx": "^0.5.0"
+    "importx": "^0.5.1"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4"
