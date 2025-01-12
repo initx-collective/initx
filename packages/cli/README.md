@@ -18,7 +18,7 @@ Use [initx-plugin-starter](https://github.com/initx-collective/initx-plugin-star
 
 - [cac](https://github.com/cacjs/cac)
 - [defu](https://github.com/unjs/defu)
-- [execa](https://github.com/sindresorhus/execa)
+- [tinyexec](https://github.com/tinylibs/tinyexec)
 - [importx](https://github.com/antfu-collective/importx)
 - [inquirer](https://github.com/SBoudrias/Inquirer.js)
 - [picocolors](https://github.com/alexeyraspopov/picocolors)
