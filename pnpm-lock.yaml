@@ -68,6 +68,9 @@ importers:
       importx:
         specifier: ^0.5.1
         version: 0.5.1
+      matchinitx:
+        specifier: ^0.0.2
+        version: 0.0.2
     devDependencies:
       '@types/fs-extra':
         specifier: ^11.0.4
@@ -2327,6 +2330,9 @@ packages:
 
   markdown-table@3.0.4:
     resolution: {integrity: sha512-wiYz4+JrLyb/DqW2hkFJxP7Vd7JuTDm77fvbM8VfEQdmSMqcImWeeRbHwZjBjIFki/VaMK2BhFi7oUUZeM5bqw==}
+
+  matchinitx@0.0.2:
+    resolution: {integrity: sha512-sDY7dpxoZ+M7kb2V4zdP3W9Gw3EzR/CkoZkGCN5SYRrfF2Y8Sjte2uZ5RHbUz2ug7P/XZTJoK7Na27m1nW+Xew==}
 
   mdast-util-find-and-replace@3.0.1:
     resolution: {integrity: sha512-SG21kZHGC3XRTSUhtofZkBzZTJNM5ecCi0SK2IMKmSXR8vO3peL+kb1O0z7Zl83jKtutG4k5Wv/W7V3/YHvzPA==}
@@ -5555,6 +5561,8 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.5.0
 
   markdown-table@3.0.4: {}
+
+  matchinitx@0.0.2: {}
 
   mdast-util-find-and-replace@3.0.1:
     dependencies:

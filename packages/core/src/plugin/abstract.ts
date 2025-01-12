@@ -1,10 +1,10 @@
 import type { MaybePromise } from '../types'
 
 import type { PackageInfo } from './utils'
-import { type Matchers, useInitxMatcher } from '../matcher'
+import { type MatcherRules, useInitxMatcher } from 'matchinitx'
 import { createStore, writeStore } from '../store'
 
-type InitxMatcher<TMatcher extends object = object> = TMatcher & {
+type InitxRuleFields<TRule extends object = object> = TRule & {
   /**
    * Description of the handler
    *
@@ -13,7 +13,7 @@ type InitxMatcher<TMatcher extends object = object> = TMatcher & {
   description: string
 }
 
-export type InitxMatchers<TMatcher extends object = object> = Matchers<InitxMatcher<TMatcher>>
+export type InitxMatcherRules<TRule extends object = object> = MatcherRules<InitxRuleFields<TRule>>
 
 export interface HandlerInfo {
   handler: () => MaybePromise<void>
@@ -53,7 +53,7 @@ export interface InitxRunContext extends InitxBaseContext {
 
 export interface InitxContext<
   TStore extends object = object,
-  TMatcher extends object = object
+  TRule extends object = object
 > extends InitxRunContext {
   /**
    * Store
@@ -63,31 +63,31 @@ export interface InitxContext<
   store: TStore
 
   /**
-   * Matcher
+   * Rule
    *
-   * Matched matcher object, you can get custom fields, excluded `matching`
+   * Matched rule object, you can get custom fields, excluded `matching`
    */
-  matcher: InitxMatcher<TMatcher>
+  rule: InitxRuleFields<TRule>
 }
 
 export abstract class InitxPlugin<
   TStore extends object = object
 > {
-  abstract matchers: InitxMatchers
+  abstract rules: InitxMatcherRules
   abstract handle(context: InitxContext, ...others: string[]): MaybePromise<void>
 
   public defaultStore?: TStore
 
   public run(context: InitxRunContext, ...others: string[]): HandlerInfo[] {
-    const initxMatcher = useInitxMatcher<HandlerInfo, InitxMatcher>(
-      (matcher, ...others) => ({
-        handler: () => this.executeHandle(context, matcher, ...others),
-        description: matcher.description
+    const initxMatcher = useInitxMatcher<HandlerInfo, InitxRuleFields>(
+      (rule, ...others) => ({
+        handler: () => this.executeHandle(context, rule, ...others),
+        description: rule.description
       })
     )
 
     const matchedHandlers = initxMatcher.match(
-      this.matchers,
+      this.rules,
       context.key,
       ...others
     )
@@ -96,13 +96,13 @@ export abstract class InitxPlugin<
   }
 
   private async executeHandle<
-    TMatcher extends object
+    TRule extends object
   >(context: InitxRunContext,
-    matcher: InitxMatcher<TMatcher>,
+    rule: InitxRuleFields<TRule>,
     ...others: string[]
   ) {
     const store = createStore(context.packageInfo.name, this.defaultStore)
-    await this.handle({ ...context, matcher, store }, ...others)
+    await this.handle({ ...context, rule, store }, ...others)
     writeStore(context.packageInfo.name)
   }
 }
