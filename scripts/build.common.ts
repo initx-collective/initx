@@ -4,6 +4,9 @@ import { defu } from 'defu'
 
 const commonBuildConfig: BuildConfig = {
   rollup: {
+    esbuild: {
+      minify: true
+    },
     inlineDependencies: true,
     json: {
       compact: true,
