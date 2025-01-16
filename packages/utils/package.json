@@ -1,7 +1,7 @@
 {
   "name": "@initx-plugin/utils",
   "type": "module",
-  "version": "0.0.28",
+  "version": "0.0.29",
   "packageManager": "pnpm@9.15.3",
   "description": "A more convenient scripting engine",
   "license": "MIT",
