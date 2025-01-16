@@ -1,6 +1,7 @@
 import type { HandlerInfo, InitxBaseContext, InitxPlugin } from './abstract'
 
 import path from 'node:path'
+import process from 'node:process'
 import { c } from '@initx-plugin/utils'
 
 import fs from 'fs-extra'
@@ -37,6 +38,32 @@ export type MatchedPlugin = HandlerInfo & {
   packageInfo: PackageInfo
 }
 
+const regexps = {
+  plugin: /^(?:@initx-plugin\/|initx-plugin-)/,
+  exclude: /@initx-plugin\/(?:core|utils)$/
+}
+
+async function fetchProjectPlugins(): Promise<InitxPluginInfo[]> {
+  const packageJsonPath = path.join(process.cwd(), 'package.json')
+
+  if (!fs.existsSync(packageJsonPath)) {
+    return []
+  }
+
+  const packageJson = fs.readJsonSync(packageJsonPath)
+  const { dependencies = {}, devDependencies = {} } = packageJson
+
+  return Object.keys({
+    ...dependencies,
+    ...devDependencies
+  })
+    .filter(name => regexps.plugin.test(name) && !regexps.exclude.test(name))
+    .map(name => ({
+      name,
+      root: path.join(process.cwd(), 'node_modules', name)
+    }))
+}
+
 export async function fetchPlugins(): Promise<InitxPluginInfo[]> {
   const { content: nodeModules } = await c('npm', ['root', '-g'])
 
@@ -47,27 +74,28 @@ export async function fetchPlugins(): Promise<InitxPluginInfo[]> {
     ? fs.readdirSync(officialPluginPath).map(name => `@initx-plugin/${name}`)
     : []
 
-  const regexps = {
-    plugin: /^(?:@initx-plugin\/|initx-plugin-)/,
-    exclude: /@initx-plugin\/(?:core|utils)$/
-  }
-
   return [
     ...officialPlugins,
     ...communityPlugins
-  ].filter(
-    name => regexps.plugin.test(name) && !regexps.exclude.test(name)
-  ).map(name => ({
-    name,
-    root: path.join(nodeModules, name)
-  }))
+  ]
+    .filter(name => regexps.plugin.test(name) && !regexps.exclude.test(name))
+    .map(name => ({
+      name,
+      root: path.join(nodeModules, name)
+    }))
 }
 
 export async function loadPlugins(): Promise<LoadPluginResult[]> {
-  const pluginsInfo = await fetchPlugins()
+  const projectPluginsInfo = await fetchProjectPlugins()
+  const projectPluginsName = projectPluginsInfo.map(({ name }) => name)
+
+  const globalPlugins = await fetchPlugins()
+  const globalPluginsInfo = globalPlugins.filter(({ name }) => !projectPluginsName.includes(name))
+
+  const plugins = [...globalPluginsInfo, ...projectPluginsInfo]
 
   const x = await import('importx')
-  return Promise.all(pluginsInfo.map(async ({ root }) => {
+  return Promise.all(plugins.map(async ({ root }) => {
     const InitxPluginClass: Constructor<InitxPlugin> = await x
       .import(root, import.meta.url)
       .then(x => x.default)
