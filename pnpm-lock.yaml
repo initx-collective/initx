@@ -66,8 +66,8 @@ importers:
         specifier: ^0.5.2
         version: 0.5.2
       matchinitx:
-        specifier: ^0.0.3
-        version: 0.0.3
+        specifier: ^0.0.4
+        version: 0.0.4
     devDependencies:
       '@types/fs-extra':
         specifier: ^11.0.4
@@ -2445,8 +2445,8 @@ packages:
   markdown-table@3.0.4:
     resolution: {integrity: sha512-wiYz4+JrLyb/DqW2hkFJxP7Vd7JuTDm77fvbM8VfEQdmSMqcImWeeRbHwZjBjIFki/VaMK2BhFi7oUUZeM5bqw==}
 
-  matchinitx@0.0.3:
-    resolution: {integrity: sha512-f+CjZi77ShK3Yc5/crfAVZfi4/C3rU3xKZIQI3gaEuTsdV9X15o3PKaToLkiNZrb+aGzHf9Hg85mTjcNf91pQA==}
+  matchinitx@0.0.4:
+    resolution: {integrity: sha512-BSUtgo03S0n2BKajrjjMFyKzKqN5u6VE38VfMsU+aZdwRC437gj67LT8hn6FN+GoXPDfkI9yh09YGjquk8xpig==}
 
   mdast-util-find-and-replace@3.0.1:
     resolution: {integrity: sha512-SG21kZHGC3XRTSUhtofZkBzZTJNM5ecCi0SK2IMKmSXR8vO3peL+kb1O0z7Zl83jKtutG4k5Wv/W7V3/YHvzPA==}
@@ -5678,7 +5678,7 @@ snapshots:
 
   markdown-table@3.0.4: {}
 
-  matchinitx@0.0.3: {}
+  matchinitx@0.0.4: {}
 
   mdast-util-find-and-replace@3.0.1:
     dependencies:
