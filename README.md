@@ -17,6 +17,7 @@ Use [initx-plugin-starter](https://github.com/initx-collective/initx-plugin-star
 # Acknowledgement
 
 - [cac](https://github.com/cacjs/cac)
+- [ora](https://github.com/sindresorhus/ora)
 - [defu](https://github.com/unjs/defu)
 - [tinyexec](https://github.com/tinylibs/tinyexec)
 - [importx](https://github.com/antfu-collective/importx)
