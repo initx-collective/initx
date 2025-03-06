@@ -1,9 +1,8 @@
+import type { OptionalValue } from '../types'
 import type { HandlerInfo, InitxBaseContext, InitxPlugin } from './abstract'
-
 import path from 'node:path'
 import process from 'node:process'
 import { c } from '@initx-plugin/utils'
-
 import fs from 'fs-extra'
 
 type Constructor<T> = new (...args: any[]) => T
@@ -117,17 +116,17 @@ export async function loadPlugins(): Promise<LoadPluginResult[]> {
   }))
 }
 
-export function matchPlugins(
+export async function matchPlugins(
   plugins: LoadPluginResult[],
   { key, cliOptions }: InitxBaseContext,
   ...others: string[]
-): MatchedPlugin[] {
+): Promise<MatchedPlugin[]> {
   const matchedHandlers: MatchedPlugin[] = []
 
   for (const plugin of plugins) {
     const { instance, packageInfo } = plugin
 
-    const matched = instance.run({
+    const matched = await instance.run({
       key,
       cliOptions,
       packageInfo,
@@ -142,4 +141,17 @@ export function matchPlugins(
   }
 
   return matchedHandlers
+}
+
+export function inOptional(optional: OptionalValue[], value: string): boolean {
+  return optional.some((item) => {
+    if (
+      typeof item === 'string'
+      || typeof item === 'undefined'
+    ) {
+      return item === value
+    }
+
+    return item.test(value)
+  })
 }

@@ -1,7 +1,5 @@
 import type { InitxBaseContext } from '@initx-plugin/core'
-
 import process from 'node:process'
-
 import { loadPlugins, matchPlugins } from '@initx-plugin/core'
 import { inquirer, loadingFunction, log } from '@initx-plugin/utils'
 
@@ -49,9 +47,10 @@ if (!key || typeof key !== 'string') {
     optionsList: Object.keys(cliOptions).filter(key => cliOptions[key] === true).map(key => `--${key}`)
   }
 
-  const matchedHandlers = matchPlugins(plugins, ctx, ...others)
+  const matchedHandlers = await matchPlugins(plugins, ctx, ...others)
 
   if (matchedHandlers.length === 0) {
+    log.warn('No handler found')
     process.exit(0)
   }
 

@@ -1,8 +1,7 @@
-import type { MaybePromise } from '../types'
-
-import type { PackageInfo } from './utils'
+import type { MaybePromise, OptionalValue } from '../types'
 import { type MatcherRules, useInitxMatcher } from 'matchinitx'
 import { createStore, writeStore } from '../store'
+import { inOptional, type PackageInfo } from './utils'
 
 type InitxRuleFields<TRule extends object = object> = TRule & {
   /**
@@ -11,13 +10,28 @@ type InitxRuleFields<TRule extends object = object> = TRule & {
    * If multiple handlers are matched, this description will be displayed
    */
   description: string
+
+  /**
+   * Optional values
+   *
+   * Check if the first value is in the optional values.
+   *
+   * If no matching value is found in the optional value, the handler will not be executed.
+   */
+  optional?: OptionalValue[]
+
+  /**
+   * Verify function
+   *
+   * If the function returns false, the handler will not be executed.
+   */
+  verify?: (context: InitxRunContext, ...others: string[]) => MaybePromise<boolean>
 }
 
 export type InitxMatcherRules<TRule extends object = object> = MatcherRules<InitxRuleFields<TRule>>
 
-export interface HandlerInfo {
+export type HandlerInfo = InitxRuleFields & {
   handler: () => MaybePromise<void>
-  description: string
 }
 
 export interface InitxBaseContext {
@@ -78,19 +92,43 @@ export abstract class InitxPlugin<
 
   public defaultStore?: TStore
 
-  public run(context: InitxRunContext, ...others: string[]): HandlerInfo[] {
+  public async run(context: InitxRunContext, ...others: string[]): Promise<HandlerInfo[]> {
     const initxMatcher = useInitxMatcher<HandlerInfo, InitxRuleFields>(
       (rule, ...others) => ({
         handler: () => this.executeHandle(context, rule, ...others),
-        description: rule.description
+        ...rule
       })
     )
 
-    const matchedHandlers = initxMatcher.match(
-      this.rules,
-      context.key,
-      ...others
-    )
+    const matchedHandlers = (await Promise.all(
+      initxMatcher.match(
+        this.rules,
+        context.key,
+        ...others
+      )
+        .map(
+          async (matchedHandler) => {
+            // Checks if the verify function returns false
+            if (
+              matchedHandler.verify
+              && !matchedHandler.verify(context, ...others)
+            ) {
+              return false
+            }
+
+            // Checks if the first value is in the optional
+            if (
+              matchedHandler.optional
+              && !inOptional(matchedHandler.optional, others[0])
+            ) {
+              return false
+            }
+
+            return matchedHandler
+          }
+        )
+    ))
+      .filter(Boolean) as HandlerInfo[]
 
     return matchedHandlers
   }
