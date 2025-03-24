@@ -31,7 +31,8 @@
     "defu": "^6.1.4",
     "fs-extra": "^11.3.0",
     "importx": "^0.5.2",
-    "matchinitx": "^0.0.4"
+    "matchinitx": "^0.0.4",
+    "pathe": "^2.0.3"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4"

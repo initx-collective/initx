@@ -1,18 +1,18 @@
 import { homedir } from 'node:os'
-import path from 'node:path'
-
 import { defu } from 'defu'
 import fs from 'fs-extra'
+import pathe from 'pathe'
 
-let rewritedCache: Record<string, any> | null = null
+let isWritten = false
+let storeData: Record<string, any> = {}
 
-const INITX_DIR = path.resolve(homedir(), '.initx')
+const INITX_DIR = pathe.resolve(homedir(), '.initx')
 const STORE_FILE_NAME = 'store.json'
 
-const resolveStore = (name: string) => path.resolve(INITX_DIR, name, STORE_FILE_NAME)
+const resolveStore = (name: string) => pathe.resolve(INITX_DIR, name, STORE_FILE_NAME)
 
 export function createStore(name: string, defaultStore: Record<string, any> = {}) {
-  fs.ensureDirSync(path.resolve(INITX_DIR, name))
+  fs.ensureDirSync(pathe.resolve(INITX_DIR, name))
 
   const storePath = resolveStore(name)
 
@@ -40,11 +40,11 @@ export function createStore(name: string, defaultStore: Record<string, any> = {}
 }
 
 export function writeStore(name: string) {
-  if (!rewritedCache) {
+  if (!isWritten) {
     return
   }
 
-  writeJson(resolveStore(name), rewritedCache)
+  writeJson(resolveStore(name), storeData)
 }
 
 function writeJson(path: string, data: Record<string, any>) {
@@ -54,26 +54,37 @@ function writeJson(path: string, data: Record<string, any>) {
 }
 
 function useProxy(obj: Record<string, any> = {}) {
-  const isPlainObject = (value: any): boolean => {
-    return Object.prototype.toString.call(value) === '[object Object]'
-  }
+  const isObject = (value: any): boolean =>
+    typeof value === 'object'
+    && value !== null
+    && (new Set(['[object Object]', '[object Array]']))
+      .has(Object.prototype.toString.call(value))
 
-  const createDeepProxy = (target: Record<string, any>): any => {
+  const createDeepProxy = (target: Record<string, any> | any[]): Record<string, any> => {
     return new Proxy(target, {
       get(target, key) {
         const value = Reflect.get(target, key)
-        if (isPlainObject(value)) {
+
+        if (isObject(value)) {
           return createDeepProxy(value)
         }
+
         return value
       },
       set(target, key, value) {
         const success = Reflect.set(target, key, value)
-        rewritedCache = target
+        isWritten = true
+        return success
+      },
+      deleteProperty(target, key) {
+        const success = Reflect.deleteProperty(target, key)
+        isWritten = true
         return success
       }
     })
   }
 
-  return createDeepProxy(obj)
+  storeData = createDeepProxy(obj)
+
+  return storeData
 }
