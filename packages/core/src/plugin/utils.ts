@@ -1,9 +1,9 @@
 import type { OptionalValue } from '../types'
 import type { HandlerInfo, InitxBaseContext, InitxPlugin } from './abstract'
 import process from 'node:process'
-import { c } from '@initx-plugin/utils'
 import fs from 'fs-extra'
 import pathe from 'pathe'
+import { PLUGIN_DIR } from '../constants'
 
 type Constructor<T> = new (...args: any[]) => T
 
@@ -43,7 +43,7 @@ const regexps = {
 }
 
 async function fetchProjectPlugins(): Promise<InitxPluginInfo[]> {
-  const packageJsonPath = pathe.join(process.cwd(), 'package.json')
+  const packageJsonPath = pathe.resolve(process.cwd(), 'package.json')
 
   if (!fs.existsSync(packageJsonPath)) {
     return []
@@ -59,16 +59,15 @@ async function fetchProjectPlugins(): Promise<InitxPluginInfo[]> {
     .filter(name => regexps.plugin.test(name) && !regexps.exclude.test(name))
     .map(name => ({
       name,
-      root: pathe.join(process.cwd(), 'node_modules', name)
+      root: pathe.resolve(process.cwd(), 'node_modules', name)
     }))
 }
 
 export async function fetchPlugins(): Promise<InitxPluginInfo[]> {
-  const { content: nodeModules } = await c('npm', ['root', '-g'])
+  fs.ensureDirSync(PLUGIN_DIR)
+  const communityPlugins = fs.readdirSync(PLUGIN_DIR)
 
-  const communityPlugins = fs.readdirSync(nodeModules)
-
-  const officialPluginPath = pathe.join(nodeModules, '@initx-plugin')
+  const officialPluginPath = pathe.resolve(PLUGIN_DIR, '@initx-plugin')
   const officialPlugins = fs.existsSync(officialPluginPath)
     ? fs.readdirSync(officialPluginPath).map(name => `@initx-plugin/${name}`)
     : []
@@ -80,7 +79,7 @@ export async function fetchPlugins(): Promise<InitxPluginInfo[]> {
     .filter(name => regexps.plugin.test(name) && !regexps.exclude.test(name))
     .map(name => ({
       name,
-      root: pathe.join(nodeModules, name)
+      root: pathe.resolve(PLUGIN_DIR, name)
     }))
 }
 
@@ -99,7 +98,7 @@ export async function loadPlugins(): Promise<LoadPluginResult[]> {
       .import(root, import.meta.url)
       .then(x => x.default)
 
-    const packageAll = fs.readJsonSync(pathe.join(root, 'package.json'))
+    const packageAll = fs.readJsonSync(pathe.resolve(root, 'package.json'))
     const packageInfo: PackageInfo = {
       root,
       name: packageAll.name,

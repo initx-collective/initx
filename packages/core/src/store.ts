@@ -1,18 +1,15 @@
-import { homedir } from 'node:os'
 import { defu } from 'defu'
 import fs from 'fs-extra'
 import pathe from 'pathe'
+import { STORE_DIR, STORE_FILE_NAME } from './constants'
 
 let isWritten = false
 let storeData: Record<string, any> = {}
 
-const INITX_DIR = pathe.resolve(homedir(), '.initx')
-const STORE_FILE_NAME = 'store.json'
-
-const resolveStore = (name: string) => pathe.resolve(INITX_DIR, name, STORE_FILE_NAME)
+const resolveStore = (name: string) => pathe.resolve(STORE_DIR, name, STORE_FILE_NAME)
 
 export function createStore(name: string, defaultStore: Record<string, any> = {}) {
-  fs.ensureDirSync(pathe.resolve(INITX_DIR, name))
+  fs.ensureDirSync(pathe.resolve(STORE_DIR, name))
 
   const storePath = resolveStore(name)
 
