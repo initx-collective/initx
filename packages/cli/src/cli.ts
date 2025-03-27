@@ -1,10 +1,8 @@
 import type { InitxBaseContext } from '@initx-plugin/core'
 import process from 'node:process'
-import { loadPlugins, matchPlugins } from '@initx-plugin/core'
+import { installManager, loadPlugins, matchPlugins } from '@initx-plugin/core'
 import { inquirer, loadingFunction, log } from '@initx-plugin/utils'
-
 import cac from 'cac'
-
 import pkgJson from '../package.json'
 
 const cli = cac('initx')
@@ -34,6 +32,11 @@ if (!key || typeof key !== 'string') {
 }
 
 ; (async function () {
+  await loadingFunction(
+    'Installing manager plugin',
+    installManager
+  )
+
   const plugins = await loadingFunction('Loading plugins', loadPlugins)
 
   if (plugins.length === 0) {
