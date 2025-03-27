@@ -3,7 +3,7 @@ import type { HandlerInfo, InitxBaseContext, InitxPlugin } from './abstract'
 import process from 'node:process'
 import fs from 'fs-extra'
 import pathe from 'pathe'
-import { PLUGIN_DIR } from '../constants'
+import { NODE_MODULES_DIR, PLUGIN_DIR } from '../constants'
 
 type Constructor<T> = new (...args: any[]) => T
 
@@ -65,9 +65,9 @@ async function fetchProjectPlugins(): Promise<InitxPluginInfo[]> {
 
 export async function fetchPlugins(): Promise<InitxPluginInfo[]> {
   fs.ensureDirSync(PLUGIN_DIR)
-  const communityPlugins = fs.readdirSync(PLUGIN_DIR)
+  const communityPlugins = fs.readdirSync(pathe.resolve(PLUGIN_DIR, NODE_MODULES_DIR))
 
-  const officialPluginPath = pathe.resolve(PLUGIN_DIR, '@initx-plugin')
+  const officialPluginPath = pathe.resolve(PLUGIN_DIR, NODE_MODULES_DIR, '@initx-plugin')
   const officialPlugins = fs.existsSync(officialPluginPath)
     ? fs.readdirSync(officialPluginPath).map(name => `@initx-plugin/${name}`)
     : []
@@ -79,7 +79,7 @@ export async function fetchPlugins(): Promise<InitxPluginInfo[]> {
     .filter(name => regexps.plugin.test(name) && !regexps.exclude.test(name))
     .map(name => ({
       name,
-      root: pathe.resolve(PLUGIN_DIR, name)
+      root: pathe.resolve(PLUGIN_DIR, NODE_MODULES_DIR, name)
     }))
 }
 
