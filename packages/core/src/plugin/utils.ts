@@ -154,3 +154,8 @@ export function inOptional(optional: OptionalValue[], value: string): boolean {
     return item.test(value)
   })
 }
+
+export function withPluginPrefix(commands: string[]) {
+  commands.push('--prefix', PLUGIN_DIR)
+  return commands
+}

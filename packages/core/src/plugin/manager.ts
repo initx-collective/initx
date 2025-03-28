@@ -2,6 +2,7 @@ import { c } from '@initx-plugin/utils'
 import fs from 'fs-extra'
 import { resolve } from 'pathe'
 import { NODE_MODULES_DIR, PLUGIN_DIR } from '../constants'
+import { withPluginPrefix } from './utils'
 
 const MANAGER_PLUGIN_NAME = '@initx-plugin/manager'
 
@@ -18,5 +19,5 @@ export async function installManager() {
     return
   }
 
-  await c('npm', ['install', '-g', MANAGER_PLUGIN_NAME, '--prefix', PLUGIN_DIR])
+  await c('npm', withPluginPrefix(['install', '-g', MANAGER_PLUGIN_NAME]))
 }
