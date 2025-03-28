@@ -1,7 +1,7 @@
 {
   "name": "@initx/monorepo",
   "type": "module",
-  "version": "0.0.35",
+  "version": "0.0.36",
   "private": true,
   "packageManager": "pnpm@9.15.7",
   "description": "A more convenient scripting engine",
