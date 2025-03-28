@@ -6,7 +6,7 @@ import { withPluginPrefix } from './utils'
 
 const MANAGER_PLUGIN_NAME = '@initx-plugin/manager'
 
-function detectManager() {
+export function detectManager() {
   return fs.existsSync(
     resolve(PLUGIN_DIR, NODE_MODULES_DIR, MANAGER_PLUGIN_NAME)
   )
@@ -15,9 +15,5 @@ function detectManager() {
 }
 
 export async function installManager() {
-  if (detectManager()) {
-    return
-  }
-
   await c('npm', withPluginPrefix(['install', MANAGER_PLUGIN_NAME]))
 }
