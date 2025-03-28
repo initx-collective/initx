@@ -19,5 +19,5 @@ export async function installManager() {
     return
   }
 
-  await c('npm', withPluginPrefix(['install', '-g', MANAGER_PLUGIN_NAME]))
+  await c('npm', withPluginPrefix(['install', MANAGER_PLUGIN_NAME]))
 }
