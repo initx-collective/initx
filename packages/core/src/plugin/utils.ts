@@ -3,7 +3,7 @@ import type { HandlerInfo, InitxBaseContext, InitxPlugin } from './abstract'
 import process from 'node:process'
 import fs from 'fs-extra'
 import pathe from 'pathe'
-import { NODE_MODULES_DIR, PLUGIN_DIR } from '../constants'
+import { PLUGIN_DIR } from '../constants'
 
 type Constructor<T> = new (...args: any[]) => T
 
@@ -42,8 +42,8 @@ const regexps = {
   exclude: /@initx-plugin\/(?:core|utils)$/
 }
 
-async function fetchProjectPlugins(): Promise<InitxPluginInfo[]> {
-  const packageJsonPath = pathe.resolve(process.cwd(), 'package.json')
+async function fetchPackagePlugins(dirctory: string): Promise<InitxPluginInfo[]> {
+  const packageJsonPath = pathe.resolve(dirctory, 'package.json')
 
   if (!fs.existsSync(packageJsonPath)) {
     return []
@@ -59,28 +59,21 @@ async function fetchProjectPlugins(): Promise<InitxPluginInfo[]> {
     .filter(name => regexps.plugin.test(name) && !regexps.exclude.test(name))
     .map(name => ({
       name,
-      root: pathe.resolve(process.cwd(), 'node_modules', name)
+      root: pathe.resolve(dirctory, 'node_modules', name)
     }))
 }
 
+async function fetchProjectPlugins(): Promise<InitxPluginInfo[]> {
+  return fetchPackagePlugins(process.cwd())
+}
+
 export async function fetchPlugins(): Promise<InitxPluginInfo[]> {
-  fs.ensureDirSync(PLUGIN_DIR)
-  const communityPlugins = fs.readdirSync(pathe.resolve(PLUGIN_DIR, NODE_MODULES_DIR))
+  if (!fs.existsSync(PLUGIN_DIR)) {
+    fs.ensureDirSync(PLUGIN_DIR)
+    return []
+  }
 
-  const officialPluginPath = pathe.resolve(PLUGIN_DIR, NODE_MODULES_DIR, '@initx-plugin')
-  const officialPlugins = fs.existsSync(officialPluginPath)
-    ? fs.readdirSync(officialPluginPath).map(name => `@initx-plugin/${name}`)
-    : []
-
-  return [
-    ...officialPlugins,
-    ...communityPlugins
-  ]
-    .filter(name => regexps.plugin.test(name) && !regexps.exclude.test(name))
-    .map(name => ({
-      name,
-      root: pathe.resolve(PLUGIN_DIR, NODE_MODULES_DIR, name)
-    }))
+  return fetchPackagePlugins(PLUGIN_DIR)
 }
 
 export async function loadPlugins(): Promise<LoadPluginResult[]> {
