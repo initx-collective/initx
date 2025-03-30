@@ -2,7 +2,7 @@
   "name": "initx",
   "type": "module",
   "version": "0.0.37",
-  "packageManager": "pnpm@9.15.7",
+  "packageManager": "pnpm@10.7.0",
   "description": "A more convenient scripting engine",
   "license": "MIT",
   "homepage": "https://github.com/initx-collective/initx#readme",
