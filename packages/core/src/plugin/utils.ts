@@ -52,15 +52,29 @@ async function fetchPackagePlugins(dirctory: string): Promise<InitxPluginInfo[]>
   const packageJson = fs.readJsonSync(packageJsonPath)
   const { dependencies = {}, devDependencies = {} } = packageJson
 
-  return Object.keys({
+  const plugins: InitxPluginInfo[] = []
+
+  Object.keys({
     ...dependencies,
     ...devDependencies
-  })
-    .filter(name => regexps.plugin.test(name) && !regexps.exclude.test(name))
-    .map(name => ({
+  }).forEach((name) => {
+    if (!regexps.plugin.test(name) || regexps.exclude.test(name)) {
+      return
+    }
+
+    const root = pathe.resolve(dirctory, 'node_modules', name)
+
+    if (!fs.existsSync(root)) {
+      return
+    }
+
+    plugins.push({
       name,
-      root: pathe.resolve(dirctory, 'node_modules', name)
-    }))
+      root
+    })
+  })
+
+  return plugins
 }
 
 async function fetchProjectPlugins(): Promise<InitxPluginInfo[]> {
