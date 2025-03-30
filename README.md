@@ -21,7 +21,7 @@ git config --global user.name "foo"
 git config --global user.email "foo@example.com"
 
 # after
-npx initx user foo foo@example.com
+initx user foo foo@example.com
 ```
 
 </details>
@@ -37,13 +37,13 @@ gpg -k # get the key id
 gpg --armor --export <key-id> # export the key
 
 # after
-npx cp gpg
+initx cp gpg
 
 # before
 # open ~/.ssh/id_rsa.pub or C:/Users/<username>/.ssh/id_rsa.pub and copy it
 
 # after
-npx cp ssh
+initx cp ssh
 ```
 
 </details>
