@@ -62,7 +62,7 @@ initx cp ssh
 # after
 initx pm add ~/projects # add projects directory, only need to do it once
 initx create user/repo
-# or initx create user/repo project-name
+# or initx pm create user/repo project-name
 ```
 
 </details>
