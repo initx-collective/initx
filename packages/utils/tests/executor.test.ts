@@ -16,5 +16,5 @@ it('command executor with error', async () => {
   const npmResult = await c(command)
 
   expect(npmResult.success).toBe(false)
-  expect(npmResult.content).toBe(`can not find command: ${command}`)
+  expect(npmResult.content).toBe(`Can not find command: ${command}`)
 })
