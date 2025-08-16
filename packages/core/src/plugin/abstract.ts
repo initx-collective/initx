@@ -1,7 +1,9 @@
+import type { MatcherRules } from 'matchinitx'
 import type { MaybePromise, OptionalValue } from '../types'
-import { type MatcherRules, useInitxMatcher } from 'matchinitx'
+import type { PackageInfo } from './utils'
+import { useInitxMatcher } from 'matchinitx'
 import { createStore, writeStore } from '../store'
-import { inOptional, type PackageInfo } from './utils'
+import { inOptional } from './utils'
 
 type InitxRuleFields<TRule extends object = object> = TRule & {
   /**
