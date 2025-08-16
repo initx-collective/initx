@@ -1,6 +1,7 @@
 import type { OptionalValue } from '../types'
 import type { HandlerInfo, InitxBaseContext, InitxPlugin } from './abstract'
 import process from 'node:process'
+import { pathToFileURL } from 'node:url'
 import fs from 'fs-extra'
 import pathe from 'pathe'
 import { PLUGIN_DIR } from '../constants'
@@ -99,13 +100,12 @@ export async function loadPlugins(): Promise<LoadPluginResult[]> {
 
   const plugins = [...globalPluginsInfo, ...projectPluginsInfo]
 
-  const x = await import('importx')
   return Promise.all(plugins.map(async ({ root }) => {
-    const InitxPluginClass: Constructor<InitxPlugin> = await x
-      .import(root, import.meta.url)
-      .then(x => x.default)
-
     const packageAll = fs.readJsonSync(pathe.resolve(root, 'package.json'))
+    const modulePath = pathToFileURL(pathe.resolve(root, packageAll.main)).href
+
+    const InitxPluginClass: Constructor<InitxPlugin> = (await import(modulePath)).default
+
     const packageInfo: PackageInfo = {
       root,
       name: packageAll.name,
