@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.1.1",
   "private": true,
-  "packageManager": "pnpm@10.11.0",
+  "packageManager": "pnpm@10.14.0",
   "description": "A more convenient scripting engine",
   "license": "MIT",
   "homepage": "https://github.com/initx-collective/initx#readme",
@@ -26,15 +26,15 @@
   },
   "devDependencies": {
     "@imba97/eslint-config": "^0.0.6",
-    "@types/node": "^22.15.21",
-    "bumpp": "^10.1.1",
+    "@types/node": "^24.3.0",
+    "bumpp": "^10.2.3",
     "defu": "^6.1.4",
-    "eslint": "^9.27.0",
-    "lint-staged": "^16.0.0",
-    "simple-git-hooks": "^2.13.0",
-    "typescript": "^5.8.3",
-    "unbuild": "^3.5.0",
-    "vitest": "^3.1.4"
+    "eslint": "^9.33.0",
+    "lint-staged": "^16.1.5",
+    "simple-git-hooks": "^2.13.1",
+    "typescript": "^5.9.2",
+    "unbuild": "^3.6.1",
+    "vitest": "^3.2.4"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged"
