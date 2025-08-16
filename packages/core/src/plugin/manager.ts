@@ -1,19 +1,17 @@
-import { c } from '@initx-plugin/utils'
-import fs from 'fs-extra'
-import { resolve } from 'pathe'
-import { NODE_MODULES_DIR, PLUGIN_DIR } from '../constants'
-import { withPluginPrefix } from './utils'
+import { pluginSystem } from './system'
 
 const MANAGER_PLUGIN_NAME = '@initx-plugin/manager'
 
-export function detectManager() {
-  return fs.existsSync(
-    resolve(PLUGIN_DIR, NODE_MODULES_DIR, MANAGER_PLUGIN_NAME)
-  )
-
-  // TODO: check version, not needed at present.
+export async function detectManager() {
+  try {
+    const plugins = await pluginSystem.list()
+    return plugins.some(plugin => plugin.name === MANAGER_PLUGIN_NAME)
+  }
+  catch {
+    return false
+  }
 }
 
 export async function installManager() {
-  await c('npm', withPluginPrefix(['install', MANAGER_PLUGIN_NAME]))
+  await pluginSystem.install(MANAGER_PLUGIN_NAME)
 }

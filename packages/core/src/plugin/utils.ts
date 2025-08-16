@@ -1,12 +1,10 @@
 import type { OptionalValue } from '../types'
 import type { HandlerInfo, InitxBaseContext, InitxPlugin } from './abstract'
 import process from 'node:process'
-import { pathToFileURL } from 'node:url'
 import fs from 'fs-extra'
 import pathe from 'pathe'
 import { PLUGIN_DIR } from '../constants'
-
-type Constructor<T> = new (...args: any[]) => T
+import { pluginSystem } from './system'
 
 export interface PackageInfo {
   root: string
@@ -83,12 +81,14 @@ async function fetchProjectPlugins(): Promise<InitxPluginInfo[]> {
 }
 
 export async function fetchPlugins(): Promise<InitxPluginInfo[]> {
-  if (!fs.existsSync(PLUGIN_DIR)) {
-    fs.ensureDirSync(PLUGIN_DIR)
-    return []
-  }
+  const installedPlugins = await pluginSystem.list()
 
-  return fetchPackagePlugins(PLUGIN_DIR)
+  return installedPlugins
+    .filter(plugin => regexps.plugin.test(plugin.name) && !regexps.exclude.test(plugin.name))
+    .map(plugin => ({
+      name: plugin.name,
+      root: pathe.resolve(PLUGIN_DIR, 'node_modules', plugin.name)
+    }))
 }
 
 export async function loadPlugins(): Promise<LoadPluginResult[]> {
@@ -100,12 +100,10 @@ export async function loadPlugins(): Promise<LoadPluginResult[]> {
 
   const plugins = [...globalPluginsInfo, ...projectPluginsInfo]
 
-  return Promise.all(plugins.map(async ({ root }) => {
+  return Promise.all(plugins.map(async ({ name, root }) => {
+    const InitxPluginClass = await pluginSystem.load(name)
+
     const packageAll = fs.readJsonSync(pathe.resolve(root, 'package.json'))
-    const modulePath = pathToFileURL(pathe.resolve(root, packageAll.main)).href
-
-    const InitxPluginClass: Constructor<InitxPlugin> = (await import(modulePath)).default
-
     const packageInfo: PackageInfo = {
       root,
       name: packageAll.name,
@@ -118,7 +116,7 @@ export async function loadPlugins(): Promise<LoadPluginResult[]> {
     return {
       packageInfo,
       instance: new InitxPluginClass()
-    } as LoadPluginResult
+    }
   }))
 }
 
@@ -162,6 +160,9 @@ export function inOptional(optional: OptionalValue[], value: string): boolean {
   })
 }
 
+/**
+ * @deprecated Use npm-plugin-kit instead
+ */
 export function withPluginPrefix(commands: string[]) {
   commands.push('--prefix', PLUGIN_DIR)
   return commands

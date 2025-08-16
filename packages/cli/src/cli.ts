@@ -32,7 +32,13 @@ if (!key || typeof key !== 'string') {
 }
 
 ; (async function () {
-  if (!detectManager()) {
+  let installedManager
+
+  await loadingFunction('initx', async () => {
+    installedManager = await detectManager()
+  })
+
+  if (!installedManager) {
     await loadingFunction('Installing manager plugin', installManager)
   }
 

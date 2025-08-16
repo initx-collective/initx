@@ -65,6 +65,9 @@ importers:
       matchinitx:
         specifier: ^0.0.4
         version: 0.0.4
+      npm-plugin-kit:
+        specifier: ^0.1.0
+        version: 0.1.0
       pathe:
         specifier: ^2.0.3
         version: 2.0.3
@@ -1355,6 +1358,12 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
+  bundle-require@5.1.0:
+    resolution: {integrity: sha512-3WrrOuZiyaaZPWiEt4G3+IffISVC9HYlWueJEBWED4ZH4aIAC2PnkdnuRrR94M+w6yGWn4AglWtJtBI8YqvgoA==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+    peerDependencies:
+      esbuild: '>=0.18'
+
   c12@3.2.0:
     resolution: {integrity: sha512-ixkEtbYafL56E6HiFuonMm1ZjoKtIo7TH68/uiEq4DAwv9NcUX2nJ95F8TrbMeNjqIkZpruo3ojXQJ+MGG5gcQ==}
     peerDependencies:
@@ -2031,6 +2040,9 @@ packages:
     resolution: {integrity: sha512-veYYhQa+D1QBKznvhUHxb8faxlrwUnxseDAbAp457E0wLNio2bOSKnjYDhMj+YiAq61xrMGhQk9iXVk5FzgQMw==}
     engines: {node: '>=6'}
 
+  importx@0.5.2:
+    resolution: {integrity: sha512-YEwlK86Ml5WiTxN/ECUYC5U7jd1CisAVw7ya4i9ZppBoHfFkT2+hChhr3PE2fYxUKLkNyivxEQpa5Ruil1LJBQ==}
+
   imurmurhash@0.1.4:
     resolution: {integrity: sha512-JmXMZ6wuvDmLiHEml9ykzqO6lwFbof0GG4IkcGaENdCRDDmMVnny7s5HsIgHCbaq0w2MyPhDqkhTUgS2LU2PHA==}
     engines: {node: '>=0.8.19'}
@@ -2182,6 +2194,10 @@ packages:
   listr2@9.0.1:
     resolution: {integrity: sha512-SL0JY3DaxylDuo/MecFeiC+7pedM0zia33zl0vcjgwcq1q1FWWF1To9EIauPbl8GbMCU0R2e0uJ8bZunhYKD2g==}
     engines: {node: '>=20.0.0'}
+
+  load-tsconfig@0.2.5:
+    resolution: {integrity: sha512-IXO6OCs9yg8tMKzfPZ1YmheJbZCiEsnBdcB03l0OcfK9prKnJb96siuHCr5Fl37/yo9DnKU+TLpxzTUspw9shg==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
   local-pkg@1.1.1:
     resolution: {integrity: sha512-WunYko2W1NcdfAFpuLUoucsgULmgDBRkdxHxWQ7mK0cQqwPiy8E1enjuRBrhLtZkB5iScJ1XIPdhVEFK8aOLSg==}
@@ -2447,6 +2463,9 @@ packages:
   normalize-range@0.1.2:
     resolution: {integrity: sha512-bdok/XvKII3nUpklnV6P2hxtMNrCboOjAcyBuQnWEhO665FwrSNRxU+AqpsyvO6LgGYPspN+lu5CLtw4jPRKNA==}
     engines: {node: '>=0.10.0'}
+
+  npm-plugin-kit@0.1.0:
+    resolution: {integrity: sha512-7KxPSPQHvmQV02LR3udBhTQ37ptAAFELI0UsF13hOsJiaj/HWnUQcN+g/xrSKn0xE8N0bh864lF5p8hsOX3Eiw==}
 
   nth-check@2.1.1:
     resolution: {integrity: sha512-lqjrjmaOoAnWfMmBPL+XNnynZh2+swxiX3WUE0s4yEHI6m+AwrK2UZOimIRl3X/4QctVqS8AiZjFqyOGrMXb/w==}
@@ -3029,6 +3048,11 @@ packages:
 
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
+
+  tsx@4.20.4:
+    resolution: {integrity: sha512-yyxBKfORQ7LuRt/BQKBXrpcq59ZvSW0XxwfjAt3w2/8PmdxaFzijtMhTawprSHhpzeM5BgU2hXHG3lklIERZXg==}
+    engines: {node: '>=18.0.0'}
+    hasBin: true
 
   type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
@@ -4023,7 +4047,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/typescript-estree': 8.28.0(typescript@5.9.2)
       '@typescript-eslint/utils': 8.28.0(eslint@9.33.0(jiti@2.5.1))(typescript@5.9.2)
-      debug: 4.4.0
+      debug: 4.4.1
       eslint: 9.33.0(jiti@2.5.1)
       ts-api-utils: 2.1.0(typescript@5.9.2)
       typescript: 5.9.2
@@ -4038,7 +4062,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 8.28.0
       '@typescript-eslint/visitor-keys': 8.28.0
-      debug: 4.4.0
+      debug: 4.4.1
       fast-glob: 3.3.2
       is-glob: 4.0.3
       minimatch: 9.0.5
@@ -4183,7 +4207,7 @@ snapshots:
       '@vue/shared': 3.4.37
       estree-walker: 2.0.2
       magic-string: 0.30.17
-      postcss: 8.4.49
+      postcss: 8.5.6
       source-map-js: 1.2.1
 
   '@vue/compiler-ssr@3.4.37':
@@ -4293,6 +4317,11 @@ snapshots:
       yaml: 2.8.1
     transitivePeerDependencies:
       - magicast
+
+  bundle-require@5.1.0(esbuild@0.25.9):
+    dependencies:
+      esbuild: 0.25.9
+      load-tsconfig: 0.2.5
 
   c12@3.2.0:
     dependencies:
@@ -5071,6 +5100,17 @@ snapshots:
       parent-module: 1.0.1
       resolve-from: 4.0.0
 
+  importx@0.5.2:
+    dependencies:
+      bundle-require: 5.1.0(esbuild@0.25.9)
+      debug: 4.4.1
+      esbuild: 0.25.9
+      jiti: 2.5.1
+      pathe: 2.0.3
+      tsx: 4.20.4
+    transitivePeerDependencies:
+      - supports-color
+
   imurmurhash@0.1.4: {}
 
   indent-string@5.0.0: {}
@@ -5204,6 +5244,8 @@ snapshots:
       log-update: 6.1.0
       rfdc: 1.4.1
       wrap-ansi: 9.0.0
+
+  load-tsconfig@0.2.5: {}
 
   local-pkg@1.1.1:
     dependencies:
@@ -5532,7 +5574,7 @@ snapshots:
   micromark@4.0.1:
     dependencies:
       '@types/debug': 4.1.12
-      debug: 4.4.0
+      debug: 4.4.1
       decode-named-character-reference: 1.0.2
       devlop: 1.1.0
       micromark-core-commonmark: 2.0.2
@@ -5622,6 +5664,14 @@ snapshots:
       validate-npm-package-license: 3.0.4
 
   normalize-range@0.1.2: {}
+
+  npm-plugin-kit@0.1.0:
+    dependencies:
+      fs-extra: 11.3.1
+      importx: 0.5.2
+      pathe: 1.1.2
+    transitivePeerDependencies:
+      - supports-color
 
   nth-check@2.1.1:
     dependencies:
@@ -6218,6 +6268,13 @@ snapshots:
       typescript: 5.9.2
 
   tslib@2.8.1: {}
+
+  tsx@4.20.4:
+    dependencies:
+      esbuild: 0.25.9
+      get-tsconfig: 4.10.0
+    optionalDependencies:
+      fsevents: 2.3.3
 
   type-check@0.4.0:
     dependencies:
