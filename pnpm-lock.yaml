@@ -66,8 +66,8 @@ importers:
         specifier: ^0.0.4
         version: 0.0.4
       npm-plugin-kit:
-        specifier: ^0.1.0
-        version: 0.1.0
+        specifier: ^0.3.1
+        version: 0.3.1
       pathe:
         specifier: ^2.0.3
         version: 2.0.3
@@ -2464,8 +2464,8 @@ packages:
     resolution: {integrity: sha512-bdok/XvKII3nUpklnV6P2hxtMNrCboOjAcyBuQnWEhO665FwrSNRxU+AqpsyvO6LgGYPspN+lu5CLtw4jPRKNA==}
     engines: {node: '>=0.10.0'}
 
-  npm-plugin-kit@0.1.0:
-    resolution: {integrity: sha512-7KxPSPQHvmQV02LR3udBhTQ37ptAAFELI0UsF13hOsJiaj/HWnUQcN+g/xrSKn0xE8N0bh864lF5p8hsOX3Eiw==}
+  npm-plugin-kit@0.3.1:
+    resolution: {integrity: sha512-c9XvVJywRZlI1oKkMAgZlIDIlKnnu6s8eadmFZBCGWPB+DVBWx6lZeb8wPWLlajZqDWQy3sBpTk2TloKvUzQbA==}
 
   nth-check@2.1.1:
     resolution: {integrity: sha512-lqjrjmaOoAnWfMmBPL+XNnynZh2+swxiX3WUE0s4yEHI6m+AwrK2UZOimIRl3X/4QctVqS8AiZjFqyOGrMXb/w==}
@@ -5665,7 +5665,7 @@ snapshots:
 
   normalize-range@0.1.2: {}
 
-  npm-plugin-kit@0.1.0:
+  npm-plugin-kit@0.3.1:
     dependencies:
       fs-extra: 11.3.1
       importx: 0.5.2
