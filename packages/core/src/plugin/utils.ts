@@ -16,10 +16,9 @@ export interface PackageInfo {
 }
 
 export interface InitxPluginInfo {
-  /**
-   * Plugin name
-   */
   name: string
+  version: string
+  description: string
 
   /**
    * Plugin root path
@@ -69,6 +68,8 @@ async function fetchPackagePlugins(dirctory: string): Promise<InitxPluginInfo[]>
 
     plugins.push({
       name,
+      version: packageJson.version,
+      description: packageJson.description,
       root
     })
   })
@@ -87,6 +88,8 @@ export async function fetchPlugins(): Promise<InitxPluginInfo[]> {
     .filter(plugin => regexps.plugin.test(plugin.name) && !regexps.exclude.test(plugin.name))
     .map(plugin => ({
       name: plugin.name,
+      version: plugin.version,
+      description: plugin.description,
       root: pathe.resolve(PLUGIN_DIR, 'node_modules', plugin.name)
     }))
 }
