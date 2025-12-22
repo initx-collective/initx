@@ -2,7 +2,7 @@
   "name": "@initx-plugin/core",
   "type": "module",
   "version": "0.1.3",
-  "packageManager": "pnpm@10.14.0",
+  "packageManager": "pnpm@10.26.1",
   "description": "core module for initx plugins",
   "license": "MIT",
   "homepage": "https://github.com/initx-collective/initx#readme",
@@ -29,7 +29,7 @@
   "dependencies": {
     "@initx-plugin/utils": "workspace:*",
     "defu": "^6.1.4",
-    "fs-extra": "^11.3.1",
+    "fs-extra": "^11.3.3",
     "matchinitx": "^0.0.4",
     "npm-plugin-kit": "^0.3.1",
     "pathe": "^2.0.3"
