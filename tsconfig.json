@@ -3,13 +3,12 @@
     "target": "ESNext",
     "lib": ["ESNext"],
     "moduleDetection": "force",
-    "baseUrl": ".",
     "rootDir": ".",
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "paths": {
-      "@initx-plugin/core": ["packages/core/src/index.ts"],
-      "@initx-plugin/utils": ["packages/utils/src/index.ts"]
+      "@initx-plugin/core": ["./packages/core/src/index.ts"],
+      "@initx-plugin/utils": ["./packages/utils/src/index.ts"]
     },
     "resolveJsonModule": true,
     "strict": true,
