@@ -75,10 +75,12 @@ Install it globally
 npm i -g initx
 ```
 
-Then you can ignore `npx`
+Then you can ignore `npx`. You can also use `ix` as a short command alias
 
 ```bash
 initx <command> [options]
+# or
+ix <command> [options]
 ```
 
 Use various functions by installing plugins
