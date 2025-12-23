@@ -12,19 +12,21 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
 
       - name: Set node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v5
         with:
           node-version: lts/*
           cache: pnpm
           registry-url: 'https://registry.npmjs.org'
+
+      - run: npm i -g npm@latest
 
       - run: npx changelogithub
         env:
@@ -38,6 +40,3 @@ jobs:
 
       - name: Publish to NPM
         run: pnpm -r publish --access public --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-          NPM_CONFIG_PROVENANCE: true
