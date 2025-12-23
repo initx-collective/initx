@@ -19,8 +19,12 @@
   "main": "dist/index.mjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
-  "bin": "bin/initx.mjs",
+  "bin": {
+    "initx": "bin/initx.mjs",
+    "ix": "bin/initx.mjs"
+  },
   "files": [
+    "bin",
     "dist"
   ],
   "scripts": {
