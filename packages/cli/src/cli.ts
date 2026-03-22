@@ -1,7 +1,7 @@
 import type { InitxBaseContext } from '@initx-plugin/core'
 import process from 'node:process'
 import { detectManager, installManager, loadPlugins, matchPlugins } from '@initx-plugin/core'
-import { inquirer, loadingFunction, log } from '@initx-plugin/utils'
+import { inquirer, loadingFunction, logger } from '@initx-plugin/utils'
 import cac from 'cac'
 import pkgJson from '../package.json'
 
@@ -13,6 +13,7 @@ cli
   .command('<something>', 'see https://github.com/initx-collective/initx')
   .usage('')
   .option('-v, --version', 'Display version number')
+  .option('-d, --debug', 'Debug mode')
 
 const { args, options: cliOptions } = cli.parse()
 
@@ -25,10 +26,15 @@ if (cliOptions.v || cliOptions.version) {
   process.exit(0)
 }
 
+if (cliOptions.d || cliOptions.debug) {
+  logger.setLevel('debug')
+  logger.debug('Debug mode enabled')
+}
+
 const [key, ...others] = args
 
 if (!key || typeof key !== 'string') {
-  log.error('Please enter something')
+  logger.error('Please enter something')
   process.exit(0)
 }
 
@@ -46,7 +52,7 @@ if (!key || typeof key !== 'string') {
   const plugins = await loadingFunction('Loading plugins', loadPlugins)
 
   if (plugins.length === 0) {
-    log.error('No plugin installed')
+    logger.error('No plugin installed')
     process.exit(0)
   }
 
@@ -59,7 +65,7 @@ if (!key || typeof key !== 'string') {
   const matchedHandlers = await matchPlugins(plugins, ctx, ...others)
 
   if (matchedHandlers.length === 0) {
-    log.warn('No handler found')
+    logger.warn('No handler found')
     process.exit(0)
   }
 
@@ -77,7 +83,7 @@ if (!key || typeof key !== 'string') {
   )
 
   if (!matchedHandlers[index] || typeof matchedHandlers[index].handler !== 'function') {
-    log.error('Handler not found')
+    logger.error('Handler not found')
     process.exit(0)
   }
 
