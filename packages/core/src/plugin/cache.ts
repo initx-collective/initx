@@ -40,4 +40,27 @@ export class PluginCache {
   async rebuild(all: Record<string, NpmPackageInfo>): Promise<void> {
     await this.write(all)
   }
+
+  /**
+   * Validate cache integrity. Returns true if cache is valid.
+   * Cache is invalid if any entry is missing required fields.
+   */
+  async validate(): Promise<boolean> {
+    if (!(await pathExists(this.cachePath)))
+      return false
+
+    const cache = await this.read()
+    for (const info of Object.values(cache)) {
+      if (!info.version || info.resolved === undefined || info.overridden === undefined)
+        return false
+    }
+    return true
+  }
+
+  /**
+   * Clear cache file
+   */
+  async clear(): Promise<void> {
+    await this.write({})
+  }
 }

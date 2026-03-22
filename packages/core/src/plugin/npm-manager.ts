@@ -145,10 +145,20 @@ export class NpmManager {
 
   async list(): Promise<Record<string, NpmPackageInfo>> {
     const cacheData = await this.cache.read()
-    if (Object.keys(cacheData).length > 0) {
+
+    // Check if cache is valid (not empty and has required fields)
+    if (Object.keys(cacheData).length > 0 && await this.cache.validate()) {
       return cacheData
     }
 
+    // Cache is empty or invalid, rebuild from npm list
+    return await this.rebuildCache()
+  }
+
+  /**
+   * Force rebuild cache from npm list command
+   */
+  async rebuildCache(): Promise<Record<string, NpmPackageInfo>> {
     const command = `list --prefix "${this.pluginDir}" --depth=0 --json`
     let dependencies: Record<string, NpmPackageInfo> = {}
     try {
@@ -171,12 +181,26 @@ export class NpmManager {
     for (const [pkg, info] of Object.entries(dependencies)) {
       if (regexps.exclude.test(pkg))
         continue
+      // Ensure resolved field exists (npm list may not provide it)
+      if (info.resolved === undefined) {
+        info.resolved = ''
+      }
       info.description = await this.getPackageDescription(pkg)
       filteredDependencies[pkg] = info
     }
 
     await this.cache.rebuild(filteredDependencies)
     return filteredDependencies
+  }
+
+  /**
+   * Ensure cache file is valid. If invalid, rebuild it.
+   * Call this after updating core packages or if cache was manually deleted.
+   */
+  async ensureCacheValid(): Promise<void> {
+    if (!(await this.cache.validate())) {
+      await this.rebuildCache()
+    }
   }
 
   private async getPackageInfo(packageName: string): Promise<NpmPackageInfo | null> {

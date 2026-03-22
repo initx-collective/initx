@@ -57,4 +57,12 @@ export class NpmPluginSystem<T = any> implements PluginSystem<T> {
   resolve(packageName: string, ...paths: string[]): string {
     return join(this.pluginDir, 'node_modules', packageName, ...paths)
   }
+
+  /**
+   * Ensure plugin cache is valid. Rebuild if invalid.
+   * Call this after updating core packages or if cache was manually deleted.
+   */
+  async ensureCacheValid(): Promise<void> {
+    await this.npmManager.ensureCacheValid()
+  }
 }
