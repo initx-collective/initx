@@ -1,5 +1,6 @@
 import type { NpmPackageInfo } from './types'
 import { exec } from 'node:child_process'
+import { readdir } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { promisify } from 'node:util'
 import { join } from 'pathe'
@@ -163,7 +164,6 @@ export class NpmManager {
     const nodeModulesPath = join(this.pluginDir, 'node_modules')
 
     try {
-      const { readdir } = await import('node:fs/promises')
       const entries = await readdir(nodeModulesPath, { withFileTypes: true })
 
       for (const entry of entries) {
