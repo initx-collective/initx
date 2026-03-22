@@ -1,7 +1,7 @@
 import type { NpmPackageInfo } from './types'
 import { exec } from 'node:child_process'
-import { readdir } from 'node:fs/promises'
 import { createRequire } from 'node:module'
+import { cwd } from 'node:process'
 import { promisify } from 'node:util'
 import { join } from 'pathe'
 import { PluginCache } from './cache'
@@ -157,33 +157,30 @@ export class NpmManager {
   }
 
   /**
-   * Force rebuild cache by scanning node_modules for plugins
+   * Force rebuild cache by reading project package.json dependencies
    */
   async rebuildCache(): Promise<Record<string, NpmPackageInfo>> {
     const result: Record<string, NpmPackageInfo> = {}
-    const nodeModulesPath = join(this.pluginDir, 'node_modules')
 
     try {
-      const entries = await readdir(nodeModulesPath, { withFileTypes: true })
+      // Read project package.json
+      const pkgPath = join(cwd(), 'package.json')
+      const pkg = await readJSON(pkgPath)
+      const deps = { ...pkg.dependencies, ...pkg.devDependencies }
 
-      for (const entry of entries) {
-        if (!entry.isDirectory())
-          continue
-
-        const pkgName = entry.name
-
+      for (const [name] of Object.entries(deps)) {
         // Only include initx plugins, exclude core packages
-        if (!regexps.plugin.test(pkgName) || regexps.exclude.test(pkgName))
+        if (!regexps.plugin.test(name) || regexps.exclude.test(name))
           continue
 
-        const info = await this.getPackageInfo(pkgName)
+        const info = await this.getPackageInfo(name)
         if (info) {
-          result[pkgName] = info
+          result[name] = info
         }
       }
     }
     catch {
-      // Directory doesn't exist or can't be read
+      // package.json doesn't exist or can't be read
     }
 
     await this.cache.rebuild(result)
