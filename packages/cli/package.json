@@ -2,7 +2,7 @@
   "name": "initx",
   "type": "module",
   "version": "0.1.4",
-  "packageManager": "pnpm@10.26.1",
+  "packageManager": "pnpm@10.32.1",
   "description": "A more convenient scripting engine",
   "license": "MIT",
   "homepage": "https://github.com/initx-collective/initx#readme",
@@ -34,6 +34,6 @@
   "dependencies": {
     "@initx-plugin/core": "workspace:*",
     "@initx-plugin/utils": "workspace:*",
-    "cac": "^6.7.14"
+    "cac": "^7.0.0"
   }
 }
