@@ -38,12 +38,16 @@ if (!key || typeof key !== 'string') {
   process.exit(0)
 }
 
+logger.debug(`Input: ${key}`)
+
 ; (async function () {
   let installedManager
 
   await loadingFunction('initx', async () => {
     installedManager = await detectManager()
   })
+
+  logger.debug(`Manager: ${installedManager ? 'installed' : 'not found'}`)
 
   if (!installedManager) {
     await loadingFunction('Installing manager plugin', installManager)
@@ -56,6 +60,8 @@ if (!key || typeof key !== 'string') {
     process.exit(0)
   }
 
+  logger.debug(`Loaded ${plugins.length} plugins`)
+
   const ctx: InitxBaseContext = {
     key,
     cliOptions,
@@ -64,13 +70,16 @@ if (!key || typeof key !== 'string') {
 
   const matchedHandlers = await matchPlugins(plugins, ctx, ...others)
 
+  logger.debug(`Matched ${matchedHandlers.length} handlers`)
+
   if (matchedHandlers.length === 0) {
     logger.warn('No handler found')
     process.exit(0)
   }
 
   if (matchedHandlers.length === 1) {
-    const [{ handler }] = matchedHandlers
+    const [{ handler, description }] = matchedHandlers
+    logger.debug(`Running: ${description}`)
     await handler()
     process.exit(0)
   }
@@ -87,5 +96,7 @@ if (!key || typeof key !== 'string') {
     process.exit(0)
   }
 
-  await matchedHandlers[index].handler()
+  const { handler, description } = matchedHandlers[index]
+  logger.debug(`Running: ${description}`)
+  await handler()
 })()
