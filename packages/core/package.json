@@ -31,7 +31,6 @@
     "defu": "^6.1.4",
     "fs-extra": "^11.3.3",
     "matchinitx": "^0.0.4",
-    "npm-plugin-kit": "^0.3.1",
     "pathe": "^2.0.3"
   },
   "devDependencies": {

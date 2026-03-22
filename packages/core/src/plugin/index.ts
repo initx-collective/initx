@@ -1,6 +1,7 @@
 export type { HandlerInfo, InitxBaseContext, InitxContext, InitxMatcherRules } from './abstract'
 export { InitxPlugin } from './abstract'
 export { detectManager, installManager } from './manager'
-export { pluginSystem } from './system'
+export { createNpmPlugin, pluginSystem } from './system'
+export type { NpmPackageInfo, PluginInfo, PluginOptions, PluginSystem, SearchResult } from './types'
 export type { InitxPluginInfo, LoadPluginResult, MatchedPlugin, PackageInfo } from './utils'
 export { fetchPlugins, loadPlugins, matchPlugins, withPluginPrefix } from './utils'
