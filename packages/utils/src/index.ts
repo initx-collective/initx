@@ -1,3 +1,4 @@
+export * from './colors'
 export * from './executor'
 export * from './gpg'
 export * from './inquirer'
