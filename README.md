@@ -113,5 +113,4 @@ Use [initx-plugin-starter](https://github.com/initx-collective/initx-plugin-star
 - [tinyexec](https://github.com/tinylibs/tinyexec)
 - [importx](https://github.com/antfu-collective/importx)
 - [inquirer](https://github.com/SBoudrias/Inquirer.js)
-- [picocolors](https://github.com/alexeyraspopov/picocolors)
 - [which](https://github.com/npm/node-which)

@@ -81,9 +81,6 @@ importers:
       ora:
         specifier: ^9.3.0
         version: 9.3.0
-      picocolors:
-        specifier: ^1.1.1
-        version: 1.1.1
       tinyexec:
         specifier: ^1.0.4
         version: 1.0.4
@@ -5572,7 +5569,7 @@ snapshots:
       esbuild: 0.27.2
       fdir: 6.5.0(picomatch@4.0.3)
       picomatch: 4.0.3
-      postcss: 8.5.6
+      postcss: 8.5.8
       rollup: 4.46.2
       tinyglobby: 0.2.15
     optionalDependencies:
