@@ -9,8 +9,6 @@ export const STORE_FILE_NAME = 'store.json'
 
 export const PLUGIN_DIR = resolve(INITX_DIR, 'plugins')
 
-export const PLUGINS_CACHE_FILE = '.plugins.json'
-
 export const NODE_MODULES_DIR = fs.existsSync(resolve(PLUGIN_DIR, 'lib'))
   ? 'lib/node_modules'
   : 'node_modules'

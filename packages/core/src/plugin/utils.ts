@@ -35,11 +35,9 @@ export type MatchedPlugin = HandlerInfo & {
   packageInfo: PackageInfo
 }
 
-export const regexps = {
+const regexps = {
   plugin: /^(?:@initx-plugin\/|initx-plugin-)/,
-  exclude: /@initx-plugin\/(?:core|utils)$/,
-  pluginId: /^[a-z][a-z0-9-]*$/,
-  relativePath: /^\.\.?(?:$|[/\\])/
+  exclude: /@initx-plugin\/(?:core|utils)$/
 }
 
 async function fetchPackagePlugins(dirctory: string): Promise<InitxPluginInfo[]> {
@@ -171,40 +169,4 @@ export function inOptional(optional: OptionalValue[], value: string): boolean {
 export function withPluginPrefix(commands: string[]) {
   commands.push('--prefix', PLUGIN_DIR)
   return commands
-}
-
-export function validatePluginId(pluginId: string): boolean {
-  return regexps.pluginId.test(pluginId) && pluginId.length >= 3
-}
-
-export function isLocalPath(packageName: string): boolean {
-  if (packageName.startsWith('file:'))
-    return true
-
-  if (pathe.isAbsolute(packageName))
-    return true
-
-  if (regexps.relativePath.test(packageName))
-    return true
-
-  return false
-}
-
-export function resolveLocalPath(packageName: string, workingDir: string = process.cwd()): string {
-  if (packageName.startsWith('file:')) {
-    const path = packageName.slice(5) // Remove 'file:' prefix
-    return pathe.isAbsolute(path) ? path : pathe.resolve(workingDir, path)
-  }
-
-  return pathe.resolve(workingDir, packageName)
-}
-
-export async function validateLocalPath(localPath: string): Promise<boolean> {
-  try {
-    const packageJsonPath = pathe.join(localPath, 'package.json')
-    return await fs.pathExists(packageJsonPath)
-  }
-  catch {
-    return false
-  }
 }
