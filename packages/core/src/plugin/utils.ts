@@ -37,7 +37,9 @@ export type MatchedPlugin = HandlerInfo & {
 
 export const regexps = {
   plugin: /^(?:@initx-plugin\/|initx-plugin-)/,
-  exclude: /@initx-plugin\/(?:core|utils)$/
+  exclude: /@initx-plugin\/(?:core|utils)$/,
+  pluginId: /^[a-z][a-z0-9-]*$/,
+  relativePath: /^\.\.?(?:$|[/\\])/
 }
 
 async function fetchPackagePlugins(dirctory: string): Promise<InitxPluginInfo[]> {
@@ -172,21 +174,18 @@ export function withPluginPrefix(commands: string[]) {
 }
 
 export function validatePluginId(pluginId: string): boolean {
-  return /^[a-z][a-z0-9-]*$/.test(pluginId) && pluginId.length >= 3
+  return regexps.pluginId.test(pluginId) && pluginId.length >= 3
 }
 
 export function isLocalPath(packageName: string): boolean {
-  if (packageName.startsWith('file:')) {
+  if (packageName.startsWith('file:'))
     return true
-  }
 
-  if (pathe.isAbsolute(packageName)) {
+  if (pathe.isAbsolute(packageName))
     return true
-  }
 
-  if (/^\.\.?(?:$|[/\\])/.test(packageName)) {
+  if (regexps.relativePath.test(packageName))
     return true
-  }
 
   return false
 }

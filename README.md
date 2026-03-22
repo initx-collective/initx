@@ -4,7 +4,7 @@
 
 <pre align="center">npx <b>initx &lt;something&gt;</b></pre>
 
-# What is it?
+## What is it?
 
 `initx` can quickly execute some scripts through plug-ins to simplify complex functions
 
@@ -67,7 +67,7 @@ initx create user/repo
 
 </details>
 
-# Usage
+## Usage
 
 Install it globally
 
@@ -95,7 +95,7 @@ This will install the `@initx-plugin/git` plugin
 initx plugin add git
 ```
 
-# Plugins
+## Plugins
 
 - [@initx-plugin/git](https://github.com/initx-collective/initx-plugin-git)
 - [@initx-plugin/gpg](https://github.com/initx-collective/initx-plugin-gpg)
@@ -104,7 +104,7 @@ initx plugin add git
 
 Use [initx-plugin-starter](https://github.com/initx-collective/initx-plugin-starter) to get started
 
-# Acknowledgement
+## Acknowledgement
 
 - [cac](https://github.com/cacjs/cac)
 - [ora](https://github.com/sindresorhus/ora)

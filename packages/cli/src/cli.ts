@@ -5,6 +5,7 @@ import { inquirer, loadingFunction, log } from '@initx-plugin/utils'
 import cac from 'cac'
 import pkgJson from '../package.json'
 
+const PLUGIN_NAME_RE = /^@?initx-plugin[-/]/
 const cli = cac('initx')
 
 cli
@@ -71,7 +72,7 @@ if (!key || typeof key !== 'string') {
   const index = await inquirer.select(
     'Which handler do you want to run?',
     matchedHandlers.map(
-      ({ description, packageInfo }) => `[${packageInfo.name.replace(/^@?initx-plugin[-/]/, '')}] ${description}`
+      ({ description, packageInfo }) => `[${packageInfo.name.replace(PLUGIN_NAME_RE, '')}] ${description}`
     )
   )
 
