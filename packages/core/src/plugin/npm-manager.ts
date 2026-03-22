@@ -156,41 +156,38 @@ export class NpmManager {
   }
 
   /**
-   * Force rebuild cache from npm list command
+   * Force rebuild cache by scanning node_modules for plugins
    */
   async rebuildCache(): Promise<Record<string, NpmPackageInfo>> {
-    const command = `list --prefix "${this.pluginDir}" --depth=0 --json`
-    let dependencies: Record<string, NpmPackageInfo> = {}
+    const result: Record<string, NpmPackageInfo> = {}
+    const nodeModulesPath = join(this.pluginDir, 'node_modules')
+
     try {
-      const { stdout } = await this.executeNpmCommand(command)
-      dependencies = JSON.parse(stdout).dependencies || {}
-    }
-    catch (error: any) {
-      if (error.stdout) {
-        try {
-          dependencies = JSON.parse(error.stdout).dependencies || {}
-        }
-        catch {
-          dependencies = {}
+      const { readdir } = await import('node:fs/promises')
+      const entries = await readdir(nodeModulesPath, { withFileTypes: true })
+
+      for (const entry of entries) {
+        if (!entry.isDirectory())
+          continue
+
+        const pkgName = entry.name
+
+        // Only include initx plugins, exclude core packages
+        if (!regexps.plugin.test(pkgName) || regexps.exclude.test(pkgName))
+          continue
+
+        const info = await this.getPackageInfo(pkgName)
+        if (info) {
+          result[pkgName] = info
         }
       }
     }
-
-    // Filter out core packages (defensive: should not be installed via pluginSystem)
-    const filteredDependencies: Record<string, NpmPackageInfo> = {}
-    for (const [pkg, info] of Object.entries(dependencies)) {
-      if (regexps.exclude.test(pkg))
-        continue
-      // Ensure resolved field exists (npm list may not provide it)
-      if (info.resolved === undefined) {
-        info.resolved = ''
-      }
-      info.description = await this.getPackageDescription(pkg)
-      filteredDependencies[pkg] = info
+    catch {
+      // Directory doesn't exist or can't be read
     }
 
-    await this.cache.rebuild(filteredDependencies)
-    return filteredDependencies
+    await this.cache.rebuild(result)
+    return result
   }
 
   /**
