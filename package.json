@@ -34,7 +34,7 @@
     "simple-git-hooks": "^2.13.1",
     "typescript": "^5.9.3",
     "unbuild": "^3.6.1",
-    "vitest": "^4.1.0"
+    "vitest": "^4.1.1"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged"
