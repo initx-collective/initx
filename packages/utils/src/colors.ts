@@ -1,4 +1,4 @@
-const CODES = {
+export const CODES = {
   reset: '\x1B[0m',
   // Foreground colors
   black: '\x1B[30m',

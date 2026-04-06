@@ -1,21 +1,8 @@
 /* eslint-disable no-console */
 
-type LogLevel = 'debug' | 'info' | 'success' | 'warn' | 'error'
+import { CODES } from './colors'
 
-const CODES = {
-  reset: '\x1B[0m',
-  black: '\x1B[30m',
-  white: '\x1B[37m',
-  red: '\x1B[31m',
-  green: '\x1B[32m',
-  yellow: '\x1B[33m',
-  blue: '\x1B[34m',
-  bgBrightBlack: '\x1B[100m',
-  bgGreen: '\x1B[42m',
-  bgBlue: '\x1B[44m',
-  bgYellow: '\x1B[43m',
-  bgRed: '\x1B[41m'
-} as const
+type LogLevel = 'debug' | 'info' | 'success' | 'warn' | 'error'
 
 const LEVEL_PRIORITY: Record<LogLevel, number> = {
   debug: 0,
@@ -42,7 +29,7 @@ class Logger {
 
   debug(msg: string): void {
     if (this.shouldLog('debug'))
-      console.log(`${colorize(' DEBUG ', 'black', 'bgBrightBlack')} ${msg}`)
+      console.log(`${colorize(' DEBUG ', 'black', 'bgGray')} ${msg}`)
   }
 
   info(msg: string): void {
