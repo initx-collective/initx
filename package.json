@@ -17,7 +17,7 @@
   "scripts": {
     "stub": "pnpm -r run stub",
     "build": "pnpm -r run build",
-    "test": "vitest",
+    "test": "vitest run",
     "tu": "vitest -u",
     "lint": "eslint --cache",
     "release": "bumpp -r",
