@@ -1,7 +1,7 @@
 import type { OptionalValue } from '../types'
 import type { HandlerInfo, InitxBaseContext, InitxPlugin } from './abstract'
+import { existsSync, readFileSync } from 'node:fs'
 import process from 'node:process'
-import fs from 'fs-extra'
 import pathe from 'pathe'
 import { PLUGIN_DIR } from '../constants'
 import { pluginSystem } from './system'
@@ -43,11 +43,11 @@ const regexps = {
 async function fetchPackagePlugins(dirctory: string): Promise<InitxPluginInfo[]> {
   const packageJsonPath = pathe.resolve(dirctory, 'package.json')
 
-  if (!fs.existsSync(packageJsonPath)) {
+  if (!existsSync(packageJsonPath)) {
     return []
   }
 
-  const packageJson = fs.readJsonSync(packageJsonPath)
+  const packageJson = readJson(packageJsonPath)
   const { dependencies = {}, devDependencies = {} } = packageJson
 
   const plugins: InitxPluginInfo[] = []
@@ -62,7 +62,7 @@ async function fetchPackagePlugins(dirctory: string): Promise<InitxPluginInfo[]>
 
     const root = pathe.resolve(dirctory, 'node_modules', name)
 
-    if (!fs.existsSync(root)) {
+    if (!existsSync(root)) {
       return
     }
 
@@ -106,7 +106,7 @@ export async function loadPlugins(): Promise<LoadPluginResult[]> {
   return Promise.all(plugins.map(async ({ name, root }) => {
     const InitxPluginClass = await pluginSystem.load(name)
 
-    const packageAll = fs.readJsonSync(pathe.resolve(root, 'package.json'))
+    const packageAll = readJson(pathe.resolve(root, 'package.json'))
     const packageInfo: PackageInfo = {
       root,
       name: packageAll.name,
@@ -169,4 +169,8 @@ export function inOptional(optional: OptionalValue[], value: string): boolean {
 export function withPluginPrefix(commands: string[]) {
   commands.push('--prefix', PLUGIN_DIR)
   return commands
+}
+
+function readJson(path: string): Record<string, any> {
+  return JSON.parse(readFileSync(path, 'utf8'))
 }

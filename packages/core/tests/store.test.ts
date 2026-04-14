@@ -1,5 +1,6 @@
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { mkdtemp } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import fs from 'fs-extra'
 import pathe from 'pathe'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -7,7 +8,7 @@ describe('store', () => {
   let storeRoot = ''
 
   beforeEach(async () => {
-    storeRoot = await fs.mkdtemp(pathe.join(tmpdir(), 'initx-store-test-'))
+    storeRoot = await mkdtemp(pathe.join(tmpdir(), 'initx-store-test-'))
     vi.resetModules()
 
     vi.doMock('../src/constants', () => ({
@@ -33,7 +34,7 @@ describe('store', () => {
 
     writeStore('plugin-a')
 
-    const saved = fs.readJsonSync(storePath)
+    const saved = JSON.parse(readFileSync(storePath, 'utf8'))
 
     expect(saved).toEqual({
       nested: {
@@ -46,13 +47,13 @@ describe('store', () => {
   it('merges existing file with defaults', async () => {
     const storePath = pathe.join(storeRoot, 'stores', 'plugin-b', 'store.json')
 
-    fs.ensureDirSync(pathe.dirname(storePath))
-    fs.writeJsonSync(storePath, {
+    mkdirSync(pathe.dirname(storePath), { recursive: true })
+    writeFileSync(storePath, JSON.stringify({
       existing: true,
       nested: {
         keep: 'yes'
       }
-    })
+    }, null, 2))
 
     const { createStore } = await import('../src/store')
 
@@ -78,10 +79,10 @@ describe('store', () => {
   it('keeps array fields from file without concatenating defaults', async () => {
     const storePath = pathe.join(storeRoot, 'stores', 'plugin-c', 'store.json')
 
-    fs.ensureDirSync(pathe.dirname(storePath))
-    fs.writeJsonSync(storePath, {
+    mkdirSync(pathe.dirname(storePath), { recursive: true })
+    writeFileSync(storePath, JSON.stringify({
       prefix: ['fix', 'feat']
-    })
+    }, null, 2))
 
     const { createStore } = await import('../src/store')
 

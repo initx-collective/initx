@@ -1,5 +1,5 @@
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { createDefu } from 'defu'
-import fs from 'fs-extra'
 import pathe from 'pathe'
 import { STORE_DIR, STORE_FILE_NAME } from './constants'
 
@@ -15,7 +15,7 @@ const mergeStore = createDefu((obj, key, value) => {
 })
 
 export function createStore(name: string, defaultStore: Record<string, any> = {}) {
-  fs.ensureDirSync(pathe.resolve(STORE_DIR, name))
+  mkdirSync(pathe.resolve(STORE_DIR, name), { recursive: true })
 
   const storePath = resolveStore(name)
 
@@ -24,14 +24,14 @@ export function createStore(name: string, defaultStore: Record<string, any> = {}
     return useProxy(resultData)
   }
 
-  if (!fs.existsSync(storePath)) {
+  if (!existsSync(storePath)) {
     return generateResult(cloneValue(defaultStore))
   }
 
   let json
 
   try {
-    const fileJson = fs.readJsonSync(storePath)
+    const fileJson = readJson(storePath)
     json = mergeStore(fileJson, defaultStore)
   }
   // eslint-disable-next-line unused-imports/no-unused-vars
@@ -51,9 +51,11 @@ export function writeStore(name: string) {
 }
 
 function writeJson(path: string, data: Record<string, any>) {
-  fs.writeJsonSync(path, data, {
-    spaces: 2
-  })
+  writeFileSync(path, `${JSON.stringify(data, null, 2)}\n`, 'utf8')
+}
+
+function readJson(path: string): Record<string, any> {
+  return JSON.parse(readFileSync(path, 'utf8'))
 }
 
 function useProxy(obj: Record<string, any> = {}) {
