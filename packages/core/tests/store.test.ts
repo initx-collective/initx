@@ -74,4 +74,21 @@ describe('store', () => {
       }
     })
   })
+
+  it('keeps array fields from file without concatenating defaults', async () => {
+    const storePath = pathe.join(storeRoot, 'stores', 'plugin-c', 'store.json')
+
+    fs.ensureDirSync(pathe.dirname(storePath))
+    fs.writeJsonSync(storePath, {
+      prefix: ['fix', 'feat']
+    })
+
+    const { createStore } = await import('../src/store')
+
+    const store = createStore('plugin-c', {
+      prefix: ['fix', 'feat']
+    })
+
+    expect(store.prefix).toEqual(['fix', 'feat'])
+  })
 })

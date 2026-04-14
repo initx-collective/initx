@@ -1,4 +1,4 @@
-import { defu } from 'defu'
+import { createDefu } from 'defu'
 import fs from 'fs-extra'
 import pathe from 'pathe'
 import { STORE_DIR, STORE_FILE_NAME } from './constants'
@@ -7,6 +7,12 @@ let isWritten = false
 let storeData: Record<string, any> = {}
 
 const resolveStore = (name: string) => pathe.resolve(STORE_DIR, name, STORE_FILE_NAME)
+const mergeStore = createDefu((obj, key, value) => {
+  if (Array.isArray(obj[key]) && Array.isArray(value)) {
+    // Keep array values from store file and prevent default-array concatenation.
+    return true
+  }
+})
 
 export function createStore(name: string, defaultStore: Record<string, any> = {}) {
   fs.ensureDirSync(pathe.resolve(STORE_DIR, name))
@@ -19,18 +25,18 @@ export function createStore(name: string, defaultStore: Record<string, any> = {}
   }
 
   if (!fs.existsSync(storePath)) {
-    return generateResult(defaultStore)
+    return generateResult(cloneValue(defaultStore))
   }
 
   let json
 
   try {
     const fileJson = fs.readJsonSync(storePath)
-    json = defu(fileJson, defaultStore)
+    json = mergeStore(fileJson, defaultStore)
   }
   // eslint-disable-next-line unused-imports/no-unused-vars
   catch (e) {
-    json = defaultStore
+    json = cloneValue(defaultStore)
   }
 
   return generateResult(json)
@@ -84,4 +90,23 @@ function useProxy(obj: Record<string, any> = {}) {
   storeData = createDeepProxy(obj)
 
   return storeData
+}
+
+function isPlainObject(value: unknown): value is Record<string, any> {
+  return Object.prototype.toString.call(value) === '[object Object]'
+}
+
+function cloneValue<T>(value: T): T {
+  if (Array.isArray(value))
+    return value.map(item => cloneValue(item)) as T
+
+  if (isPlainObject(value)) {
+    const result: Record<string, any> = {}
+    for (const [key, nested] of Object.entries(value)) {
+      result[key] = cloneValue(nested)
+    }
+    return result as T
+  }
+
+  return value
 }
