@@ -1,4 +1,4 @@
-import ora from 'ora'
+import { Spinner } from 'picospinner'
 import { x } from 'tinyexec'
 
 import { where } from './which'
@@ -37,7 +37,8 @@ export async function c(command: string, options?: string[], execaOptions: Recor
 }
 
 export async function loadingFunction<T>(message: string, fn: () => Promise<T>) {
-  const spinner = ora(message).start()
+  const spinner = new Spinner(message)
+  spinner.start()
 
   return fn().finally(() => {
     spinner.stop()

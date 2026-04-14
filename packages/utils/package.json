@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@inquirer/prompts": "^8.4.1",
-    "ora": "^9.3.0",
+    "picospinner": "^3.0.0",
     "tinyexec": "^1.1.1",
     "which": "^6.0.1"
   },
