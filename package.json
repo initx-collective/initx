@@ -25,16 +25,16 @@
     "prepare": "simple-git-hooks"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^8.0.0",
-    "@types/node": "^25.5.2",
+    "@antfu/eslint-config": "^8.2.0",
+    "@types/node": "^25.6.0",
     "bumpp": "^11.0.1",
-    "defu": "^6.1.6",
+    "defu": "^6.1.7",
     "eslint": "^10.2.0",
     "nano-staged": "^1.0.2",
     "simple-git-hooks": "^2.13.1",
     "typescript": "^6.0.2",
     "unbuild": "^3.6.1",
-    "vitest": "^4.1.2"
+    "vitest": "^4.1.4"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm nano-staged"

@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@initx-plugin/utils": "workspace:*",
-    "defu": "^6.1.6",
+    "defu": "^6.1.7",
     "fs-extra": "^11.3.4",
     "matchinitx": "^0.0.4",
     "npm-plugin-kit": "^0.4.0",

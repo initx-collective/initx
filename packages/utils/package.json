@@ -37,9 +37,9 @@
     "build": "unbuild"
   },
   "dependencies": {
-    "@inquirer/prompts": "^8.3.2",
+    "@inquirer/prompts": "^8.4.1",
     "ora": "^9.3.0",
-    "tinyexec": "^1.0.4",
+    "tinyexec": "^1.1.1",
     "which": "^6.0.1"
   },
   "devDependencies": {
