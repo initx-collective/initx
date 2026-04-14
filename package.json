@@ -30,16 +30,16 @@
     "bumpp": "^11.0.1",
     "defu": "^6.1.6",
     "eslint": "^10.2.0",
-    "lint-staged": "^16.4.0",
+    "nano-staged": "^1.0.2",
     "simple-git-hooks": "^2.13.1",
     "typescript": "^6.0.2",
     "unbuild": "^3.6.1",
     "vitest": "^4.1.2"
   },
   "simple-git-hooks": {
-    "pre-commit": "pnpm lint-staged"
+    "pre-commit": "pnpm nano-staged"
   },
-  "lint-staged": {
+  "nano-staged": {
     "*": "eslint --cache --fix"
   }
 }
