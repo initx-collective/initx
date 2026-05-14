@@ -125,7 +125,7 @@ export async function loadPlugins(): Promise<LoadPluginResult[]> {
 
 export async function matchPlugins(
   plugins: LoadPluginResult[],
-  { key, cliOptions }: InitxBaseContext,
+  { key, cliOptions, optionsList }: InitxBaseContext,
   ...others: string[]
 ): Promise<MatchedPlugin[]> {
   const matchedHandlers: MatchedPlugin[] = []
@@ -137,7 +137,7 @@ export async function matchPlugins(
       key,
       cliOptions,
       packageInfo,
-      optionsList: Object.keys(cliOptions).filter(key => cliOptions[key] === true).map(key => `--${key}`)
+      optionsList
     }, ...others)
 
     matchedHandlers.push(...matched.map(item => ({

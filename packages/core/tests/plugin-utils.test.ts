@@ -39,7 +39,7 @@ describe('plugin utils', () => {
         dryRun: false,
         force: true
       },
-      optionsList: []
+      optionsList: ['--debug', '--force']
     }, 'dev')
 
     expect(run).toHaveBeenCalledWith({
