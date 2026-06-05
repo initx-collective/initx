@@ -47,7 +47,8 @@ describe('runCli', () => {
             name: 'initx-plugin-a',
             version: '1.0.0',
             description: 'plugin a',
-            author: 'test'
+            author: 'test',
+            isLocal: false
           },
           instance: {} as any
         }
@@ -61,7 +62,8 @@ describe('runCli', () => {
             name: 'initx-plugin-a',
             version: '1.0.0',
             description: 'plugin a',
-            author: 'test'
+            author: 'test',
+            isLocal: false
           }
         }
       ])
@@ -104,7 +106,8 @@ describe('runCli', () => {
             name: 'initx-plugin-a',
             version: '1.0.0',
             description: 'plugin a',
-            author: 'test'
+            author: 'test',
+            isLocal: false
           },
           instance: {} as any
         }
@@ -118,7 +121,8 @@ describe('runCli', () => {
             name: 'initx-plugin-a',
             version: '1.0.0',
             description: 'plugin a',
-            author: 'test'
+            author: 'test',
+            isLocal: false
           }
         },
         {
@@ -129,7 +133,8 @@ describe('runCli', () => {
             name: 'initx-plugin-b',
             version: '1.0.0',
             description: 'plugin b',
-            author: 'test'
+            author: 'test',
+            isLocal: false
           }
         }
       ]),

@@ -1,9 +1,10 @@
+import type { PluginInfo } from 'npm-plugin-kit'
 import type { OptionalValue } from '../types'
 import type { HandlerInfo, InitxBaseContext, InitxPlugin } from './abstract'
+import type { InitxPluginExtra } from './system'
 import { existsSync, readFileSync } from 'node:fs'
 import process from 'node:process'
 import pathe from 'pathe'
-import { PLUGIN_DIR } from '../constants'
 import { pluginSystem } from './system'
 
 export interface PackageInfo {
@@ -13,17 +14,20 @@ export interface PackageInfo {
   description: string
   author: string
   homepage?: string
+  isLocal: boolean
 }
 
 export interface InitxPluginInfo {
   name: string
   version: string
   description: string
+  homepage?: string
 
   /**
    * Plugin root path
    */
   root: string
+  isLocal: boolean
 }
 
 export interface LoadPluginResult {
@@ -40,8 +44,60 @@ const regexps = {
   exclude: /@initx-plugin\/(?:core|utils)$/
 }
 
-async function fetchPackagePlugins(dirctory: string): Promise<InitxPluginInfo[]> {
-  const packageJsonPath = pathe.resolve(dirctory, 'package.json')
+function isInitxPluginName(name: string): boolean {
+  return regexps.plugin.test(name) && !regexps.exclude.test(name)
+}
+
+function pickOptionalString(value: unknown): string | undefined {
+  return typeof value === 'string' ? value : undefined
+}
+
+function formatAuthor(author: unknown): string {
+  if (typeof author === 'string')
+    return author
+  if (author && typeof author === 'object' && 'name' in author)
+    return String((author as { name: unknown }).name)
+  return ''
+}
+
+function toInitxPluginInfo(info: PackageInfo): InitxPluginInfo {
+  return {
+    name: info.name,
+    version: info.version,
+    description: info.description,
+    homepage: info.homepage,
+    root: info.root,
+    isLocal: info.isLocal
+  }
+}
+
+function packageInfoFromListEntry(entry: PluginInfo<InitxPluginExtra>): PackageInfo {
+  const { name, packageInfo, plugin } = entry
+  return {
+    root: plugin.root,
+    name,
+    version: packageInfo.version,
+    description: packageInfo.description,
+    author: formatAuthor(packageInfo.author),
+    homepage: pickOptionalString(packageInfo.homepage),
+    isLocal: plugin.isLocal
+  }
+}
+
+function packageInfoFromPackageJson(root: string, packageAll: Record<string, any>): PackageInfo {
+  return {
+    root,
+    name: packageAll.name,
+    version: packageAll.version ?? '',
+    description: packageAll.description ?? '',
+    author: formatAuthor(packageAll.author),
+    homepage: pickOptionalString(packageAll.homepage),
+    isLocal: false
+  }
+}
+
+async function fetchPackagePlugins(directory: string): Promise<PackageInfo[]> {
+  const packageJsonPath = pathe.resolve(directory, 'package.json')
 
   if (!existsSync(packageJsonPath)) {
     return []
@@ -50,34 +106,27 @@ async function fetchPackagePlugins(dirctory: string): Promise<InitxPluginInfo[]>
   const packageJson = readJson(packageJsonPath)
   const { dependencies = {}, devDependencies = {} } = packageJson
 
-  const plugins: InitxPluginInfo[] = []
+  const plugins: PackageInfo[] = []
 
-  Object.keys({
-    ...dependencies,
-    ...devDependencies
-  }).forEach((name) => {
-    if (!regexps.plugin.test(name) || regexps.exclude.test(name)) {
-      return
-    }
+  for (const name of Object.keys({ ...dependencies, ...devDependencies })) {
+    if (!isInitxPluginName(name))
+      continue
 
-    const root = pathe.resolve(dirctory, 'node_modules', name)
+    const root = pathe.resolve(directory, 'node_modules', name)
+    if (!existsSync(root))
+      continue
 
-    if (!existsSync(root)) {
-      return
-    }
-
+    const pluginPackageJson = readJson(pathe.resolve(root, 'package.json'))
     plugins.push({
-      name,
-      version: packageJson.version,
-      description: packageJson.description,
-      root
+      ...packageInfoFromPackageJson(root, pluginPackageJson),
+      name
     })
-  })
+  }
 
   return plugins
 }
 
-async function fetchProjectPlugins(): Promise<InitxPluginInfo[]> {
+async function fetchProjectPlugins(): Promise<PackageInfo[]> {
   return fetchPackagePlugins(process.cwd())
 }
 
@@ -85,42 +134,37 @@ export async function fetchPlugins(): Promise<InitxPluginInfo[]> {
   const installedPlugins = await pluginSystem.list()
 
   return installedPlugins
-    .filter(plugin => regexps.plugin.test(plugin.name) && !regexps.exclude.test(plugin.name))
-    .map(plugin => ({
-      name: plugin.name,
-      version: plugin.version,
-      description: plugin.description,
-      root: pathe.resolve(PLUGIN_DIR, 'node_modules', plugin.name)
-    }))
+    .filter(({ name }) => isInitxPluginName(name))
+    .map(entry => toInitxPluginInfo(packageInfoFromListEntry(entry)))
 }
 
 export async function loadPlugins(): Promise<LoadPluginResult[]> {
   const projectPluginsInfo = await fetchProjectPlugins()
-  const projectPluginsName = projectPluginsInfo.map(({ name }) => name)
+  const projectPluginNames = new Set(projectPluginsInfo.map(({ name }) => name))
 
-  const globalPlugins = await fetchPlugins()
-  const globalPluginsInfo = globalPlugins.filter(({ name }) => !projectPluginsName.includes(name))
+  const installedPlugins = await pluginSystem.list()
+  const globalEntries = installedPlugins.filter(
+    ({ name }) => isInitxPluginName(name) && !projectPluginNames.has(name)
+  )
 
-  const plugins = [...globalPluginsInfo, ...projectPluginsInfo]
-
-  return Promise.all(plugins.map(async ({ name, root }) => {
+  const loadOne = async (name: string, packageInfo: PackageInfo): Promise<LoadPluginResult> => {
     const InitxPluginClass = await pluginSystem.load(name)
-
-    const packageAll = readJson(pathe.resolve(root, 'package.json'))
-    const packageInfo: PackageInfo = {
-      root,
-      name: packageAll.name,
-      version: packageAll.version,
-      description: packageAll.description,
-      author: packageAll.author,
-      homepage: packageAll.homepage
-    }
-
     return {
       packageInfo,
       instance: new InitxPluginClass()
     }
-  }))
+  }
+
+  const globalLoads = globalEntries.map(async (entry) => {
+    const { name } = entry
+    return loadOne(name, packageInfoFromListEntry(entry))
+  })
+
+  const projectLoads = projectPluginsInfo.map(async (packageInfo) => {
+    return loadOne(packageInfo.name, packageInfo)
+  })
+
+  return Promise.all([...globalLoads, ...projectLoads])
 }
 
 export async function matchPlugins(
@@ -161,14 +205,6 @@ export function inOptional(optional: OptionalValue[], value: string): boolean {
 
     return item.test(value)
   })
-}
-
-/**
- * @deprecated Use npm-plugin-kit instead
- */
-export function withPluginPrefix(commands: string[]) {
-  commands.push('--prefix', PLUGIN_DIR)
-  return commands
 }
 
 function readJson(path: string): Record<string, any> {

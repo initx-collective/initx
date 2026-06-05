@@ -26,7 +26,8 @@ describe('plugin utils', () => {
           name: 'initx-plugin-a',
           version: '1.0.0',
           description: 'plugin a',
-          author: 'test'
+          author: 'test',
+          isLocal: false
         },
         instance: {
           run
@@ -54,7 +55,8 @@ describe('plugin utils', () => {
         name: 'initx-plugin-a',
         version: '1.0.0',
         description: 'plugin a',
-        author: 'test'
+        author: 'test',
+        isLocal: false
       },
       optionsList: ['--debug', '--force']
     }, 'dev')
@@ -68,7 +70,8 @@ describe('plugin utils', () => {
           name: 'initx-plugin-a',
           version: '1.0.0',
           description: 'plugin a',
-          author: 'test'
+          author: 'test',
+          isLocal: false
         }
       }
     ])

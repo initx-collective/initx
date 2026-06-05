@@ -47,7 +47,8 @@ function createContext(key: string): InitxRunContext {
       name: 'initx-plugin-a',
       version: '1.0.0',
       description: 'test plugin',
-      author: 'tester'
+      author: 'tester',
+      isLocal: false
     }
   }
 }
