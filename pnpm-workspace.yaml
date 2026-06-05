@@ -1,8 +1,9 @@
+minimumReleaseAgeExclude:
+  - npm-plugin-kit
+
 shellEmulator: true
 
 trustPolicy: no-downgrade
-trustPolicyExclude:
-  - tinyexec@1.2.2
 
 packages:
   - packages/*
