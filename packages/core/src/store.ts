@@ -9,7 +9,7 @@ let storeData: Record<string, any> = {}
 const resolveStore = (name: string) => pathe.resolve(STORE_DIR, name, STORE_FILE_NAME)
 const mergeStore = createDefu((obj, key, value) => {
   if (Array.isArray(obj[key]) && Array.isArray(value)) {
-    // Keep array values from store file and prevent default-array concatenation.
+    obj[key] = value
     return true
   }
 })
