@@ -21,7 +21,7 @@
     "tu": "vitest -u",
     "lint": "eslint --cache",
     "release": "bumpp -r",
-    "initx": "node ./packages/cli/bin/initx.mjs",
+    "ix": "node ./packages/cli/bin/initx.mjs",
     "prepare": "simple-git-hooks"
   },
   "devDependencies": {
