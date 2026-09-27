@@ -1,9 +1,12 @@
+minimumReleaseAgeExcludePrune: true
 minimumReleaseAgeExclude:
   - npm-plugin-kit
 
-shellEmulator: true
-
 trustPolicy: no-downgrade
+trustPolicyExclude:
+  - why-is-node-running
+
+shellEmulator: true
 
 packages:
   - packages/*
