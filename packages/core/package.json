@@ -30,7 +30,7 @@
     "@initx-plugin/utils": "workspace:*",
     "defu": "^6.1.7",
     "matchinitx": "^0.0.4",
-    "npm-plugin-kit": "^0.6.2",
+    "npm-plugin-kit": "^0.6.3",
     "pathe": "^2.0.3"
   }
 }
