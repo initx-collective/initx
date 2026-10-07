@@ -2,14 +2,18 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { inquirer } from '../src/inquirer'
 
-const { promptConfirmMock, promptSelectMock } = vi.hoisted(() => ({
+const { promptConfirmMock, promptSelectMock, promptInputMock, promptPasswordMock } = vi.hoisted(() => ({
   promptConfirmMock: vi.fn(),
-  promptSelectMock: vi.fn()
+  promptSelectMock: vi.fn(),
+  promptInputMock: vi.fn(),
+  promptPasswordMock: vi.fn()
 }))
 
 vi.mock('@inquirer/prompts', () => ({
   confirm: promptConfirmMock,
-  select: promptSelectMock
+  select: promptSelectMock,
+  input: promptInputMock,
+  password: promptPasswordMock
 }))
 
 afterEach(() => {
@@ -69,6 +73,76 @@ describe('inquirer wrapper', () => {
     expect(promptSelectMock).toHaveBeenCalledWith({
       message: 'Environment',
       choices: options
+    })
+  })
+
+  it('forwards message to input prompt', async () => {
+    promptInputMock.mockResolvedValueOnce('hello')
+
+    const result = await inquirer.input('Your name?')
+
+    expect(result).toBe('hello')
+    expect(promptInputMock).toHaveBeenCalledWith({
+      message: 'Your name?'
+    })
+  })
+
+  it('forwards default / required / pattern options to input prompt', async () => {
+    promptInputMock.mockResolvedValueOnce('abc')
+
+    const pattern = /^abc$/
+    await inquirer.input('Token?', {
+      default: 'abc',
+      required: true,
+      pattern,
+      patternError: 'must match abc'
+    })
+
+    expect(promptInputMock).toHaveBeenCalledWith({
+      message: 'Token?',
+      default: 'abc',
+      required: true,
+      pattern,
+      patternError: 'must match abc'
+    })
+  })
+
+  it('converts string pattern into RegExp for input prompt', async () => {
+    promptInputMock.mockResolvedValueOnce('abc')
+
+    await inquirer.input('Token?', { pattern: '^abc$' })
+
+    const call = promptInputMock.mock.calls[0]?.[0] as { pattern: RegExp }
+    expect(call.pattern).toBeInstanceOf(RegExp)
+    expect(call.pattern.source).toBe('^abc$')
+  })
+
+  it('skips empty-string defaults so the prompt stays empty', async () => {
+    promptInputMock.mockResolvedValueOnce('')
+
+    await inquirer.input('Empty?', { default: '' })
+
+    expect(promptInputMock).toHaveBeenCalledWith({
+      message: 'Empty?'
+    })
+  })
+
+  it('forwards mask and toggle options to password prompt', async () => {
+    promptPasswordMock.mockResolvedValueOnce('top-secret')
+
+    const validate = (value: string) => value.length > 0
+    const result = await inquirer.password('Token?', {
+      mask: '#',
+      toggleMask: true,
+      validate
+    })
+
+    expect(result).toBe('top-secret')
+    expect(promptPasswordMock).toHaveBeenCalledWith({
+      message: 'Token?',
+      mask: '#',
+      toggleMask: true,
+      validate
     })
   })
 })
