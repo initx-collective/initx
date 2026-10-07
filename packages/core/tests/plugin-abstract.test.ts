@@ -80,4 +80,76 @@ describe('initxPlugin.run', () => {
 
     expect(handlers).toHaveLength(0)
   })
+
+  it('filters out handlers when verify returns false', async () => {
+    class VerifyingPlugin extends InitxPlugin {
+      rules: InitxMatcherRules = [
+        {
+          matching: 'deploy',
+          description: 'deploy handler',
+          verify: (_context, target) => target !== 'production'
+        }
+      ]
+
+      defaultStore = {}
+
+      async handle() {}
+    }
+
+    const plugin = new VerifyingPlugin()
+
+    const handlers = await plugin.run(createContext('deploy'), 'production')
+
+    expect(handlers).toHaveLength(0)
+  })
+
+  it('runs an async handle and forwards every other positional argument', async () => {
+    class AsyncPlugin extends InitxPlugin {
+      rules: InitxMatcherRules = [
+        {
+          matching: 'run',
+          description: 'async handler'
+        }
+      ]
+
+      public captured: string[][] = []
+
+      defaultStore = {}
+
+      async handle(_context: InitxContext, ...others: string[]) {
+        this.captured.push(others)
+      }
+    }
+
+    const plugin = new AsyncPlugin()
+
+    const handlers = await plugin.run(createContext('run'), 'a', 'b', 'c')
+
+    expect(handlers).toHaveLength(1)
+    await handlers[0].handler()
+
+    expect(plugin.captured).toEqual([['a', 'b', 'c']])
+  })
+
+  it('passes an undefined defaultStore when none is configured', async () => {
+    class BarePlugin extends InitxPlugin {
+      rules: InitxMatcherRules = [
+        {
+          matching: 'noop',
+          description: 'noop'
+        }
+      ]
+
+      async handle() {}
+    }
+
+    const plugin = new BarePlugin()
+
+    const handlers = await plugin.run(createContext('noop'))
+
+    expect(handlers).toHaveLength(1)
+    await handlers[0].handler()
+
+    expect(createStoreMock).toHaveBeenCalledWith('initx-plugin-a', undefined)
+  })
 })
