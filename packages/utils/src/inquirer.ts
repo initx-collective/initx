@@ -1,6 +1,6 @@
 import type { SelectOptions, SelectReturn } from './types'
 
-import { confirm as promptConfirm, input as promptInput, password as promptPassword, select as promptSelect } from '@inquirer/prompts'
+import { confirm as promptConfirm, input as promptInput, password as promptPassword, search as promptSearch, select as promptSelect } from '@inquirer/prompts'
 
 async function confirm(message: string): Promise<boolean> {
   return promptConfirm({
@@ -14,15 +14,65 @@ async function select<T extends SelectOptions>(
 ): Promise<SelectReturn<T>> {
   return promptSelect({
     message,
-    choices: options.map((option, index) => {
+    choices: options.map((option, optionIndex) => {
       return typeof option === 'string'
         ? {
             name: option,
-            value: index
+            value: optionIndex
           }
         : option
     })
   }) as Promise<SelectReturn<T>>
+}
+
+export interface SearchChoice<T extends string | number = string | number> {
+  name: string
+  value: T
+  description?: string
+}
+
+export interface SearchOptions {
+  /** Max number of matches shown per page. */
+  pageSize?: number
+  /** Pre-filled search term. */
+  initialValue?: string
+}
+
+type SearchResult<T> = T extends readonly string[]
+  ? string
+  : T extends readonly SearchChoice<infer V>[]
+    ? V
+    : never
+
+async function search<T extends readonly (string | SearchChoice<string | number>)[]>(
+  message: string,
+  items: T,
+  options?: SearchOptions
+): Promise<SearchResult<T>> {
+  const normalized: SearchChoice<string | number>[] = items.map((item) => {
+    return typeof item === 'string'
+      ? { name: item, value: item }
+      : item
+  })
+
+  const value = await promptSearch({
+    message,
+    source: (term) => {
+      const needle = term?.toLowerCase() ?? ''
+      const matches = needle
+        ? normalized.filter(c => c.name.toLowerCase().includes(needle))
+        : normalized
+      return matches.map(c => ({
+        name: c.name,
+        value: c.value,
+        ...(c.description ? { description: c.description } : {})
+      }))
+    },
+    ...(options?.pageSize !== undefined ? { pageSize: options.pageSize } : {}),
+    ...(options?.initialValue !== undefined ? { initialValue: options.initialValue } : {})
+  })
+
+  return value as SearchResult<T>
 }
 
 export interface InputOptions {
@@ -79,5 +129,6 @@ export const inquirer = {
   confirm,
   input,
   password,
+  search,
   select
 }
