@@ -3,8 +3,10 @@ import type { OptionalValue } from '../types'
 import type { HandlerInfo, InitxBaseContext, InitxPlugin } from './abstract'
 import type { InitxPluginExtra } from './system'
 import { existsSync, readFileSync } from 'node:fs'
+import { createRequire } from 'node:module'
 import process from 'node:process'
 import pathe from 'pathe'
+import { loadLocalInitxPlugin } from './config'
 import { pluginSystem } from './system'
 
 export interface PackageInfo {
@@ -38,6 +40,8 @@ export interface LoadPluginResult {
 export type MatchedPlugin = HandlerInfo & {
   packageInfo: PackageInfo
 }
+
+type Constructor<T> = new (...args: any[]) => T
 
 const regexps = {
   plugin: /^(?:@initx-plugin\/|initx-plugin-)/,
@@ -92,7 +96,7 @@ function packageInfoFromPackageJson(root: string, packageAll: Record<string, any
     description: packageAll.description ?? '',
     author: formatAuthor(packageAll.author),
     homepage: pickOptionalString(packageAll.homepage),
-    isLocal: false
+    isLocal: true
   }
 }
 
@@ -147,8 +151,14 @@ export async function loadPlugins(): Promise<LoadPluginResult[]> {
     ({ name }) => isInitxPluginName(name) && !projectPluginNames.has(name)
   )
 
-  const loadOne = async (name: string, packageInfo: PackageInfo): Promise<LoadPluginResult> => {
-    const InitxPluginClass = await pluginSystem.load(name)
+  const loadOne = async (
+    name: string,
+    packageInfo: PackageInfo,
+    local = false
+  ): Promise<LoadPluginResult> => {
+    const InitxPluginClass = local
+      ? await loadLocalPlugin(packageInfo.root)
+      : await pluginSystem.load(name)
     return {
       packageInfo,
       instance: new InitxPluginClass()
@@ -161,10 +171,16 @@ export async function loadPlugins(): Promise<LoadPluginResult[]> {
   })
 
   const projectLoads = projectPluginsInfo.map(async (packageInfo) => {
-    return loadOne(packageInfo.name, packageInfo)
+    return loadOne(packageInfo.name, packageInfo, true)
   })
 
   return Promise.all([...globalLoads, ...projectLoads])
+}
+
+async function loadLocalPlugin(root: string): Promise<Constructor<InitxPlugin>> {
+  const require = createRequire(pathe.resolve(root, 'package.json'))
+  const entry = require.resolve(root)
+  return loadLocalInitxPlugin<Constructor<InitxPlugin>>(entry)
 }
 
 export async function matchPlugins(

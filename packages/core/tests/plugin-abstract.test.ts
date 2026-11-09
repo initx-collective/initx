@@ -152,4 +152,33 @@ describe('initxPlugin.run', () => {
 
     expect(createStoreMock).toHaveBeenCalledWith('initx-plugin-a', undefined)
   })
+
+  it('loads plugin config and injects it into the handler context', async () => {
+    class ConfigPlugin extends InitxPlugin<object, { enabled: boolean }> {
+      config = {
+        files: ['initx-core-test-config'],
+        defaults: { enabled: true }
+      }
+
+      rules: InitxMatcherRules = [
+        {
+          matching: 'config',
+          description: 'config handler'
+        }
+      ]
+
+      public received: { enabled: boolean } | undefined
+
+      async handle(context: InitxContext<object, object, { enabled: boolean }>) {
+        this.received = context.config
+      }
+    }
+
+    const plugin = new ConfigPlugin()
+    const handlers = await plugin.run(createContext('config'))
+
+    expect(handlers).toHaveLength(1)
+    await handlers[0].handler()
+    expect(plugin.received).toEqual({ enabled: true })
+  })
 })

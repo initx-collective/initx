@@ -217,6 +217,12 @@ importers:
       defu:
         specifier: ^6.1.7
         version: 6.1.7
+      importx:
+        specifier: 0.5.2
+        version: 0.5.2
+      ini:
+        specifier: 5.0.0
+        version: 5.0.0
       matchinitx:
         specifier: ^0.0.4
         version: 0.0.4
@@ -226,6 +232,12 @@ importers:
       pathe:
         specifier: ^2.0.3
         version: 2.0.3
+      unconfig:
+        specifier: 7.5.0
+        version: 7.5.0
+      yaml:
+        specifier: 2.9.1
+        version: 2.9.1
 
   packages/utils:
     dependencies:
@@ -2071,6 +2083,10 @@ packages:
   indent-string@5.0.0:
     resolution: {integrity: sha512-m6FAo/spmsW2Ab2fU35JTYwtOKa2yAwXSwgjSv1TJzh4Mh7mC3lzAOVLBprb72XsTrgkEIsl7YrFNAiDiRhIGg==}
     engines: {node: '>=12'}
+
+  ini@5.0.0:
+    resolution: {integrity: sha512-+N0ngpO3e7cRUWOJAS7qw0IZIVc6XPrW4MlFBdD066F2L4k1L6ker3hLqSq7iXxU5tgS4WGkIUElWn5vogAEnw==}
+    engines: {node: ^18.17.0 || >=20.5.0}
 
   is-builtin-module@5.0.0:
     resolution: {integrity: sha512-f4RqJKBUe5rQkJ2eJEJBXSticB3hGbN9j0yxxMQFqIW89Jp9WYFtzfTcRlstDKVUTRzSOTLKRfO9vIztenwtxA==}
@@ -4779,6 +4795,8 @@ snapshots:
   imurmurhash@0.1.4: {}
 
   indent-string@5.0.0: {}
+
+  ini@5.0.0: {}
 
   is-builtin-module@5.0.0:
     dependencies:

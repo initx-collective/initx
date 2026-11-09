@@ -1,6 +1,10 @@
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import process from 'node:process'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { inOptional, matchPlugins } from '../src/plugin/utils'
+import { fetchPlugins, inOptional, loadPlugins, matchPlugins } from '../src/plugin/utils'
 
 const { pluginSystemListMock, pluginSystemLoadMock } = vi.hoisted(() => ({
   pluginSystemListMock: vi.fn(),
@@ -240,7 +244,6 @@ describe('fetchPlugins', () => {
       }
     ])
 
-    const { fetchPlugins } = await import('../src/plugin/utils')
     const plugins = await fetchPlugins()
 
     expect(plugins.map(p => p.name)).toEqual([
@@ -263,8 +266,44 @@ describe('fetchPlugins', () => {
   it('propagates errors from the underlying plugin list', async () => {
     pluginSystemListMock.mockRejectedValueOnce(new Error('network down'))
 
-    const { fetchPlugins } = await import('../src/plugin/utils')
-
     await expect(fetchPlugins()).rejects.toThrow('network down')
+  })
+})
+
+describe('loadPlugins', () => {
+  it('loads a plugin installed in the current project', async () => {
+    const originalCwd = process.cwd()
+    const project = mkdtempSync(join(tmpdir(), 'initx-project-plugin-'))
+    const packageRoot = join(project, 'node_modules', '@initx-plugin', 'local')
+
+    mkdirSync(packageRoot, { recursive: true })
+    writeFileSync(join(project, 'package.json'), JSON.stringify({
+      dependencies: { '@initx-plugin/local': '1.0.0' }
+    }))
+    writeFileSync(join(packageRoot, 'package.json'), JSON.stringify({
+      name: '@initx-plugin/local',
+      version: '1.0.0',
+      main: 'index.mjs'
+    }))
+    writeFileSync(join(packageRoot, 'index.mjs'), 'export default class LocalPlugin {}\n')
+
+    process.chdir(project)
+    pluginSystemListMock.mockResolvedValueOnce([])
+
+    try {
+      const plugins = await loadPlugins()
+
+      expect(plugins).toHaveLength(1)
+      expect(plugins[0]?.packageInfo).toMatchObject({
+        name: '@initx-plugin/local',
+        root: packageRoot.replaceAll('\\', '/'),
+        isLocal: true
+      })
+      expect(plugins[0]?.instance.constructor.name).toBe('LocalPlugin')
+    }
+    finally {
+      process.chdir(originalCwd)
+      rmSync(project, { recursive: true, force: true })
+    }
   })
 })
