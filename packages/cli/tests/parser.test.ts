@@ -21,6 +21,8 @@ describe('createCli', () => {
     expect(optionNames).toContain('version')
     expect(optionNames).toContain('debug')
     expect(optionNames).toContain('d')
+    expect(optionNames).toContain('yes')
+    expect(optionNames).toContain('y')
   })
 })
 
@@ -87,6 +89,18 @@ describe('parseCliInput', () => {
     if (result.type === 'run') {
       expect(result.input.cliOptions.debug).toBe(true)
       expect(result.input.cliOptions.d).toBe(true)
+    }
+  })
+
+  it('exposes the yes flag under both alias keys', () => {
+    for (const flag of ['--yes', '-y']) {
+      const result = parseCliInput(['node', 'initx.mjs', 'lint', flag])
+
+      expect(result.type).toBe('run')
+      if (result.type === 'run') {
+        expect(result.input.cliOptions.yes).toBe(true)
+        expect(result.input.cliOptions.y).toBe(true)
+      }
     }
   })
 

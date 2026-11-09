@@ -67,6 +67,22 @@ describe('runCli', () => {
     expect(deps.logger.debug).toHaveBeenCalledWith('Debug mode enabled')
   })
 
+  it('skips loading animations when --yes is passed', async () => {
+    const deps = createDeps()
+
+    await runCli({
+      key: 'build',
+      others: [],
+      cliOptions: {
+        yes: true
+      }
+    }, deps)
+
+    expect(deps.detectManager).toHaveBeenCalledTimes(1)
+    expect(deps.loadPlugins).toHaveBeenCalledTimes(1)
+    expect(deps.loadingFunction).not.toHaveBeenCalled()
+  })
+
   it('installs manager when not found and runs single handler', async () => {
     const handler = vi.fn().mockResolvedValue(undefined)
     const deps = createDeps({
@@ -270,6 +286,65 @@ describe('runCli', () => {
     )
     expect(firstHandler).not.toHaveBeenCalled()
     expect(secondHandler).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not ask for a handler choice when --yes is passed', async () => {
+    const firstHandler = vi.fn().mockResolvedValue(undefined)
+    const secondHandler = vi.fn().mockResolvedValue(undefined)
+    const deps = createDeps({
+      loadPlugins: vi.fn().mockResolvedValue([
+        {
+          packageInfo: {
+            root: '/plugin-a',
+            name: 'initx-plugin-a',
+            version: '1.0.0',
+            description: 'plugin a',
+            author: 'test',
+            isLocal: false
+          },
+          instance: {} as any
+        }
+      ]),
+      matchPlugins: vi.fn().mockResolvedValue([
+        {
+          description: 'first handler',
+          handler: firstHandler,
+          packageInfo: {
+            root: '/plugin-a',
+            name: 'initx-plugin-a',
+            version: '1.0.0',
+            description: 'plugin a',
+            author: 'test',
+            isLocal: false
+          }
+        },
+        {
+          description: 'second handler',
+          handler: secondHandler,
+          packageInfo: {
+            root: '/plugin-b',
+            name: 'initx-plugin-b',
+            version: '1.0.0',
+            description: 'plugin b',
+            author: 'test',
+            isLocal: false
+          }
+        }
+      ])
+    })
+
+    await runCli({
+      key: 'build',
+      others: [],
+      cliOptions: {
+        yes: true
+      }
+    }, deps)
+
+    expect(deps.select).not.toHaveBeenCalled()
+    expect(deps.logger.error).toHaveBeenCalledWith('Multiple handlers found, please specify one')
+    expect(firstHandler).not.toHaveBeenCalled()
+    expect(secondHandler).not.toHaveBeenCalled()
   })
 
   it('strips the initx-plugin prefix when labeling choices', async () => {

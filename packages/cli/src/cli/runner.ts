@@ -21,6 +21,13 @@ export async function runCli(input: ParsedCliInput, deps: CliDeps): Promise<void
   } = deps
 
   const { key, others, cliOptions } = input
+  const yes = Boolean(cliOptions.y || cliOptions.yes)
+  const runLoading = <T>(message: string, fn: () => Promise<T>): Promise<T> => {
+    if (yes)
+      return fn()
+
+    return loadingFunction(message, fn)
+  }
 
   if (cliOptions.d || cliOptions.debug) {
     logger.setLevel('debug')
@@ -36,17 +43,17 @@ export async function runCli(input: ParsedCliInput, deps: CliDeps): Promise<void
 
   let installedManager = false
 
-  await loadingFunction('initx', async () => {
+  await runLoading('initx', async () => {
     installedManager = await detectManager()
   })
 
   logger.debug(`Manager: ${installedManager ? 'installed' : 'not found'}`)
 
   if (!installedManager) {
-    await loadingFunction('Installing manager plugin', installManager)
+    await runLoading('Installing manager plugin', installManager)
   }
 
-  const plugins = await loadingFunction('Loading plugins', loadPlugins)
+  const plugins = await runLoading('Loading plugins', loadPlugins)
 
   if (plugins.length === 0) {
     logger.error('No plugin installed')
@@ -74,6 +81,11 @@ export async function runCli(input: ParsedCliInput, deps: CliDeps): Promise<void
     const [{ handler, description }] = matchedHandlers
     logger.debug(`Running: ${description}`)
     await handler()
+    return
+  }
+
+  if (yes) {
+    logger.error('Multiple handlers found, please specify one')
     return
   }
 

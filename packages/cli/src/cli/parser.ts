@@ -10,6 +10,7 @@ export function createCli() {
     .usage('')
     .option('-v, --version', 'Display version number')
     .option('-d, --debug', 'Debug mode')
+    .option('-y, --yes', 'Skip initx loading animations')
 
   return cli
 }
