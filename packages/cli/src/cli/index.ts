@@ -1,7 +1,7 @@
 import type { CliDeps } from './types'
 import process from 'node:process'
 import { detectManager, installManager, loadPlugins, matchPlugins } from '@initx-plugin/core'
-import { inquirer, loadingFunction, logger } from '@initx-plugin/utils'
+import { inquirer, logger } from '@initx-plugin/utils'
 import pkgJson from '../../package.json'
 import { parseCliInput } from './parser'
 import { runCli } from './runner'
@@ -12,7 +12,6 @@ const defaultDeps: CliDeps = {
   loadPlugins,
   matchPlugins,
   select: inquirer.select,
-  loadingFunction,
   logger
 }
 

@@ -14,7 +14,6 @@ export async function runCli(input: ParsedCliInput, deps: CliDeps): Promise<void
     detectManager,
     installManager,
     loadPlugins,
-    loadingFunction,
     logger,
     matchPlugins,
     select
@@ -22,12 +21,6 @@ export async function runCli(input: ParsedCliInput, deps: CliDeps): Promise<void
 
   const { key, others, cliOptions } = input
   const yes = Boolean(cliOptions.y || cliOptions.yes)
-  const runLoading = <T>(message: string, fn: () => Promise<T>): Promise<T> => {
-    if (yes)
-      return fn()
-
-    return loadingFunction(message, fn)
-  }
 
   if (cliOptions.d || cliOptions.debug) {
     logger.setLevel('debug')
@@ -43,17 +36,15 @@ export async function runCli(input: ParsedCliInput, deps: CliDeps): Promise<void
 
   let installedManager = false
 
-  await runLoading('initx', async () => {
-    installedManager = await detectManager()
-  })
+  installedManager = await detectManager()
 
   logger.debug(`Manager: ${installedManager ? 'installed' : 'not found'}`)
 
   if (!installedManager) {
-    await runLoading('Installing manager plugin', installManager)
+    await installManager()
   }
 
-  const plugins = await runLoading('Loading plugins', loadPlugins)
+  const plugins = await loadPlugins()
 
   if (plugins.length === 0) {
     logger.error('No plugin installed')
