@@ -1,6 +1,7 @@
 import { Spinner } from 'picospinner'
 import { x } from 'tinyexec'
 
+import { useContext } from './context'
 import { where } from './which'
 
 interface Result {
@@ -37,6 +38,10 @@ export async function c(command: string, options?: string[], execaOptions: Recor
 }
 
 export async function loadingFunction<T>(message: string, fn: () => Promise<T>) {
+  const context = useContext()
+  if (context?.cliOptions?.y || context?.cliOptions?.yes)
+    return fn()
+
   const spinner = new Spinner(message)
   spinner.start()
 

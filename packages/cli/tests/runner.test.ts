@@ -9,6 +9,7 @@ function createDeps(overrides: Partial<CliDeps> = {}): CliDeps {
     loadPlugins: vi.fn().mockResolvedValue([]),
     matchPlugins: vi.fn().mockResolvedValue([]),
     select: vi.fn().mockResolvedValue(0),
+    loadingFunction: vi.fn(async (_message, fn) => fn()),
     logger: {
       setLevel: vi.fn(),
       debug: vi.fn(),
@@ -66,7 +67,7 @@ describe('runCli', () => {
     expect(deps.logger.debug).toHaveBeenCalledWith('Debug mode enabled')
   })
 
-  it('accepts --yes while running the core loading path directly', async () => {
+  it('skips loading animations when --yes is passed', async () => {
     const deps = createDeps()
 
     await runCli({
@@ -79,6 +80,7 @@ describe('runCli', () => {
 
     expect(deps.detectManager).toHaveBeenCalledTimes(1)
     expect(deps.loadPlugins).toHaveBeenCalledTimes(1)
+    expect(deps.loadingFunction).toHaveBeenCalledTimes(2)
   })
 
   it('installs manager when not found and runs single handler', async () => {

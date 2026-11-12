@@ -1,6 +1,7 @@
 import { randomInt } from 'node:crypto'
 import { describe, expect, it, vi } from 'vitest'
 
+import { clearContext, setContext } from '../src/context'
 import { c, loadingFunction } from '../src/executor'
 
 describe('command executor', () => {
@@ -54,6 +55,21 @@ describe('loadingFunction', () => {
     await loadingFunction('working', fn)
 
     expect(fn).toHaveBeenCalledTimes(1)
+  })
+
+  it('skips the spinner when the initx context enables yes mode', async () => {
+    setContext({
+      cliOptions: { yes: true }
+    })
+
+    try {
+      await expect(
+        loadingFunction('working', async () => 'done')
+      ).resolves.toBe('done')
+    }
+    finally {
+      clearContext()
+    }
   })
 
   it('still stops the spinner when the wrapped function rejects', async () => {

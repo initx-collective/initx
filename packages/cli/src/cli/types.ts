@@ -15,6 +15,7 @@ export interface CliDeps {
   loadPlugins: () => Promise<LoadPluginResult[]>
   matchPlugins: (plugins: LoadPluginResult[], context: InitxBaseContext, ...others: string[]) => Promise<MatchedPlugin[]>
   select: (message: string, options: string[]) => Promise<number>
+  loadingFunction: <T>(message: string, fn: () => Promise<T>) => Promise<T>
   logger: CliLogger
 }
 

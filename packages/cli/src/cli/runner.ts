@@ -1,5 +1,6 @@
 import type { InitxBaseContext } from '@initx-plugin/core'
 import type { CliDeps, ParsedCliInput } from './types'
+import { clearContext, setContext } from '@initx-plugin/utils'
 
 const PLUGIN_NAME_RE = /^@?initx-plugin[-/]/
 
@@ -14,6 +15,7 @@ export async function runCli(input: ParsedCliInput, deps: CliDeps): Promise<void
     detectManager,
     installManager,
     loadPlugins,
+    loadingFunction: _loadingFunction,
     logger,
     matchPlugins,
     select
@@ -34,65 +36,72 @@ export async function runCli(input: ParsedCliInput, deps: CliDeps): Promise<void
 
   logger.debug(`Input: ${key}`)
 
-  let installedManager = false
-
-  installedManager = await detectManager()
-
-  logger.debug(`Manager: ${installedManager ? 'installed' : 'not found'}`)
-
-  if (!installedManager) {
-    await installManager()
-  }
-
-  const plugins = await loadPlugins()
-
-  if (plugins.length === 0) {
-    logger.error('No plugin installed')
-    return
-  }
-
-  logger.debug(`Loaded ${plugins.length} plugins`)
-
   const ctx: InitxBaseContext = {
     key,
     cliOptions,
     optionsList: toOptionsList(cliOptions)
   }
 
-  const matchedHandlers = await matchPlugins(plugins, ctx, ...others)
+  setContext(ctx)
 
-  logger.debug(`Matched ${matchedHandlers.length} handlers`)
+  try {
+    let installedManager = false
 
-  if (matchedHandlers.length === 0) {
-    logger.warn('No handler found')
-    return
-  }
+    installedManager = await _loadingFunction('initx', detectManager)
 
-  if (matchedHandlers.length === 1) {
-    const [{ handler, description }] = matchedHandlers
+    logger.debug(`Manager: ${installedManager ? 'installed' : 'not found'}`)
+
+    if (!installedManager) {
+      await _loadingFunction('Installing manager plugin', installManager)
+    }
+
+    const plugins = await _loadingFunction('Loading plugins', loadPlugins)
+
+    if (plugins.length === 0) {
+      logger.error('No plugin installed')
+      return
+    }
+
+    logger.debug(`Loaded ${plugins.length} plugins`)
+
+    const matchedHandlers = await matchPlugins(plugins, ctx, ...others)
+
+    logger.debug(`Matched ${matchedHandlers.length} handlers`)
+
+    if (matchedHandlers.length === 0) {
+      logger.warn('No handler found')
+      return
+    }
+
+    if (matchedHandlers.length === 1) {
+      const [{ handler, description }] = matchedHandlers
+      logger.debug(`Running: ${description}`)
+      await handler()
+      return
+    }
+
+    if (yes) {
+      logger.error('Multiple handlers found, please specify one')
+      return
+    }
+
+    const index = await select(
+      'Which handler do you want to run?',
+      matchedHandlers.map(
+        ({ description, packageInfo }) => `[${packageInfo.name.replace(PLUGIN_NAME_RE, '')}] ${description}`
+      )
+    )
+
+    if (!matchedHandlers[index] || typeof matchedHandlers[index].handler !== 'function') {
+      logger.error('Handler not found')
+      return
+    }
+
+    const { handler, description } = matchedHandlers[index]
     logger.debug(`Running: ${description}`)
     await handler()
-    return
   }
-
-  if (yes) {
-    logger.error('Multiple handlers found, please specify one')
-    return
+  finally {
+    clearContext()
   }
-
-  const index = await select(
-    'Which handler do you want to run?',
-    matchedHandlers.map(
-      ({ description, packageInfo }) => `[${packageInfo.name.replace(PLUGIN_NAME_RE, '')}] ${description}`
-    )
-  )
-
-  if (!matchedHandlers[index] || typeof matchedHandlers[index].handler !== 'function') {
-    logger.error('Handler not found')
-    return
-  }
-
-  const { handler, description } = matchedHandlers[index]
-  logger.debug(`Running: ${description}`)
-  await handler()
 }
